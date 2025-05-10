@@ -43,8 +43,7 @@ $sql = <<<'SQL'
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
-  salt BINARY(16) NOT NULL,
-  pw_hash CHAR(64) NOT NULL,
+  pw_hash CHAR(60) NOT NULL,
   role ENUM('viewer','admin') DEFAULT 'viewer',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -67,10 +66,9 @@ CREATE TABLE IF NOT EXISTS scans (
 );
 
 -- seed admin user
-INSERT IGNORE INTO users (username, salt, pw_hash, role) VALUES (
+INSERT IGNORE INTO users (username, pw_hash, role) VALUES (
   'admin',
-  UNHEX('11223344556677889900AABBCCDDEEFF'),
-  SHA2(CONCAT(UNHEX('11223344556677889900AABBCCDDEEFF'),'admin123'),256),
+  '$2y$12$.Kv800e8X62giJzbrJxFv.pNx/pyNaoUowuIbwsBywYHNKbsdH.jK',
   'admin'
 );
 SQL;
@@ -81,9 +79,9 @@ foreach (explode(";
     if ($t !== '') $pdo->exec($stmt);
 }
 
-$pdo->exec("INSERT IGNORE INTO users (username, salt, pw_hash, role) VALUES
-  ('viewer',  UNHEX('A1B2C3D4E5F60718293A4B5C6D7E8F90'), 'd67b9e83fa409da8abcf3697ac545f9c5dc5a2b6fd9f81b753519d9e1543b4b2', 'viewer'),
-  ('manager', UNHEX('ABCDEF0123456789FEDCBA9876543210'), 'd84b009171137cf75feeef3e76863c14ef206564aa7fd6314c73d62a75806033', 'admin')");
+$pdo->exec("INSERT IGNORE INTO users (username, pw_hash, role) VALUES
+  ('viewer', '$2y$12$.Kv800e8X62giJzbrJxFv.pNx/pyNaoUowuIbwsBywYHNKbsdH.jK', 'viewer'),
+  ('manager', '$2y$12$.Kv800e8X62giJzbrJxFv.pNx/pyNaoUowuIbwsBywYHNKbsdH.jK', 'admin')");
 
 $pdo->exec("INSERT IGNORE INTO items (name, stock, location, rfid_tag) VALUES
  ('Raspberry Pi 4 Model B', 15, 'Aisle 1, Shelf 2', '1A2B3C4D5E6F7890'),
