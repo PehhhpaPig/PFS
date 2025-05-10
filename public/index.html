@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NuTracker</title>
+  <script type="module" defer src="js/app.js"></script>
+  <style>
+    body{font-family:system-ui;margin:1rem;max-width:900px}
+    table{border-collapse:collapse;width:100%}
+    th,td{border:1px solid #ccc;padding:.3rem;text-align:left}
+    thead{background:#f3f3f3}
+    input,button{margin:.2rem}
+  </style>
+</head>
+<body>
+  <h1 id="header">Please Log In to NuTracker</h1>
+
+  <!-- Auth -->
+  <section id="auth">
+    <div id="passwordRow">
+      <input id="user" placeholder="Username">
+      <input id="pass" type="password" placeholder="Password">
+    </div>
+    <div id="codeRow" hidden>
+      <input id="code" placeholder="6‑digit code">
+    </div>
+    <button id="loginBtn">Login</button>
+    <a href="register.html">Register</a>
+  </section>
+
+  <!-- Main app UI -->
+  <section id="app" hidden>
+    <!-- Scan panel -->
+    <h2>Scan Tag</h2>
+    <input id="tagInput" placeholder="Tag ID (hex)"><button id="scanBtn">Submit</button>
+
+    <h2>Add Item</h2>
+    <input id="itemName" placeholder="Name">
+    <input id="itemStock" type="number" min="0" placeholder="Stock">
+    <input id="itemLoc"   placeholder="Location">
+    <input id="itemTag"   placeholder="RFID (hex optional)">
+    <button id="addItemBtn">Add</button>
+
+    <h2>Items</h2>
+    <table>
+     <thead><tr><th>ID</th><th>Name</th><th>Stock</th><th>Location</th><th>RFID Tag</th><th></th></tr></thead>
+     <tbody id="itemsBody"></tbody>
+    </table>
+
+    <!-- Scan history -->
+    <h2>Recent Scans</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Tag</th><th>User</th><th>Time</th></tr></thead>
+      <tbody id="scansBody"></tbody>
+    </table>
+
+    <button onclick="location.reload()">Logout</button>
+  </section>
+</body>
+</html>
