@@ -25,14 +25,14 @@ if($u==''||strlen($p)<8||$p!==$c){echo json_encode(['error'=>'Invalid input.']);
 $ex=$pdo->prepare('SELECT 1 FROM users WHERE username=?');$ex->execute([$u]);
 if($ex->fetch()){echo json_encode(['error'=>'Username taken.']);exit;}
 
-$salt=random_bytes(16); $hash=hash('sha256',$salt.$p);
+$hash=password_hash($p, PASSWORD_BCRYPT, ['cost' => 12]);
 $secret = Totp::generateRandomSecret();  
 $encSecret = totp_encrypt($secret);
-$pdo->prepare('INSERT INTO users(username,salt,pw_hash,role,totp_secret,totp_enabled)
-               VALUES(?,?,?,?,?,0)')
-    ->execute([$u,$salt,$hash,'viewer',$encSecret]);
+$pdo->prepare('INSERT INTO users(username,pw_hash,role,totp_secret,totp_enabled)
+               VALUES(?,?,?,?,0)')
+    ->execute([$u,$hash,'viewer',$encSecret]);
 $_SESSION['pending_uid']=$pdo->lastInsertId();
 $_SESSION['pending_secret']=$secret;
 
-$uri=Totp::getUri($secret,$u,'NuTracker2');
+$uri=Totp::getUri($secret,$u,'NuTracker');
 echo json_encode(['uri'=>$uri]);
