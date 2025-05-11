@@ -107,6 +107,12 @@ $pdo->exec("CREATE TABLE login_throttle (
   PRIMARY KEY (username, ip_addr)
 );
 ");
+
+$pdo->exec("ALTER TABLE login_throttle
+  ADD COLUMN phase ENUM('pwd','2fa') NOT NULL DEFAULT 'pwd',
+  DROP   PRIMARY KEY,
+  ADD PRIMARY KEY (username, ip_addr, phase);");
+  
 echo "Schema imported and sample data seeded ✔
 ";
 
