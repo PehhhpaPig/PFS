@@ -1,25 +1,97 @@
 <?php
-require_once __DIR__.'/../db.php';
-require_once __DIR__.'/../lib/Totp.php';
+declare(strict_types=1);
 
-if ($_SERVER['REQUEST_METHOD']!=='POST') json_response(['error'=>'Method not allowed'],405);
-$in=json_decode(file_get_contents('php://input'),true,512,JSON_THROW_ON_ERROR);
-$u=trim($in['username']??'');$p=$in['password']??'';
-if($u===''||$p==='') json_response(['error'=>'Missing credentials'],422);
+/*
+ |------------------------------------------------------------------
+ |  /api/auth/login.php
+ |------------------------------------------------------------------
+ |  POST  username + password         (form‑data OR JSON)
+ |  → { need_2fa:true }               first step OK, ask for code
+ |  → { status:"OK", role:"admin" }   logged in (no 2FA)
+ |  → { error:"msg" } HTTP 401/429    errors
+ */
 
-$stmt=$pdo->prepare('SELECT * FROM users WHERE username=:u');$stmt->execute(['u'=>$u]);
-$user=$stmt->fetch();
-$hash = $user['pw_hash'];
-if(!$user||!password_verify($p, $hash)){
-    json_response(['error'=>'Invalid credentials'],401);
-}
+require_once __DIR__ . '/../db.php';     // loads PDO + start_secure_session()
 start_secure_session();
-if($user['totp_enabled']){
-    $_SESSION['pre_2fa']=$user['id'];
-    json_response(['need_2fa'=>true]);
+header('Content-Type: application/json; charset=utf-8');
+
+/* ---------------- helper ---------------- */
+function json_out(array $arr, int $http = 200): never {
+    http_response_code($http);
+    echo json_encode($arr); exit;
 }
-// else complete login
+
+/* ---------------- read input ---------------- */
+$raw = $_POST ?: json_decode(file_get_contents('php://input'), true) ?: [];
+$user = trim($raw['username'] ?? '');
+$pass =        $raw['password'] ?? '';
+if ($user === '' || $pass === '') json_out(['error'=>'Missing fields'], 422);
+
+/* ---------------- fetch user ---------------- */
+$stm = $pdo->prepare('SELECT id, pw_hash, role, totp_enabled FROM users WHERE username=?');
+$stm->execute([$user]);
+$usr = $stm->fetch(PDO::FETCH_ASSOC);
+if (!$usr) json_out(['error'=>'Invalid username or password'], 401);
+
+/* ---------------- throttle look‑up ---------------- */
+$ip  = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+$now = date('Y-m-d H:i:s');
+
+$thr = $pdo->prepare(
+    'SELECT fails, lock_until, last_fail
+       FROM login_throttle
+      WHERE username=? AND ip_addr=?');
+$thr->execute([$user, $ip]);
+$rec = $thr->fetch(PDO::FETCH_ASSOC) ?: ['fails'=>0,'lock_until'=>null,'last_fail'=>null];
+
+/* still locked? */
+if ($rec['lock_until'] && $now < $rec['lock_until']) {
+    json_out(['error'=>'Too many attempts. Try again later.'], 429);
+}
+
+/* ---------------- password check ---------------- */
+if (!password_verify($pass, $usr['pw_hash'])) {
+
+    /* update failure counters */
+    $fails = $rec['fails'] + 1;
+
+    /* reset 15‑min window */
+    if ($rec['last_fail'] && strtotime($rec['last_fail']) < time() - 900) {
+        $fails = 1;
+    }
+
+    /* lock every 5th fail : 30s, 60s, 120s, 240s … max 1h */
+    $lock = null;
+    if ($fails % 5 === 0) {
+        $exp  = ($fails / 5) - 1;               // 0,1,2,3…
+        $secs = 30 * (2 ** $exp);
+        $secs = min($secs, 3600);
+        $lock = date('Y-m-d H:i:s', time() + $secs);
+    }
+
+    $pdo->prepare(
+        'REPLACE INTO login_throttle
+         (username, ip_addr, fails, lock_until, last_fail)
+         VALUES (?,?,?,?,?)')
+        ->execute([$user, $ip, $fails, $lock, $now]);
+
+    json_out(['error'=>'Invalid username or password'], 401);
+}
+
+/* ---------------- success: clear throttle ---------------- */
+$pdo->prepare(
+    'DELETE FROM login_throttle WHERE username=? AND ip_addr=?')
+    ->execute([$user, $ip]);
+
+/* ---------------- 2‑factor step ---------------- */
+if ((int)$usr['totp_enabled'] === 1) {
+    $_SESSION['pre_2fa'] = $usr['id'];          // will be promoted in verify_2fa.php
+    json_out(['need_2fa'=>true]);
+}
+
+/* ---------------- establish full session ---------------- */
+$_SESSION['user_id'] = $usr['id'];
+$_SESSION['role']    = $usr['role'];
 session_regenerate_id(true);
-$_SESSION['user_id']=$user['id'];
-$_SESSION['role']=$user['role'];
-json_response(['status'=>'OK']);
+
+json_out(['status'=>'OK', 'role'=>$usr['role']]);
