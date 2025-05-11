@@ -55,8 +55,9 @@ if (isset($_POST['code']) && !isset($_SESSION['reset_verified'])) {
 /* ---------- STEP 3 – new password ---------- */
 if (isset($_POST['password']) && $_SESSION['reset_verified']===true) {
     $pass = $_POST['password'];
+    $pass2 = $_POST['password2'];
     if (strlen($pass)<8) out(['error'=>'Password too short'],422);
-
+    if ($pass!==$pass2) {echo json_encode(['error'=>'Passwords must match.']);exit;}
     $hash = password_hash($pass, PASSWORD_BCRYPT, ['cost'=>12]);
     $pdo->prepare('UPDATE users SET pw_hash=? WHERE id=?')
         ->execute([$hash, $_SESSION['reset_uid']]);
