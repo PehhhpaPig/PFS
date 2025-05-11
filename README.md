@@ -13,7 +13,24 @@ You must then use these Authenticator codes to log in to your account each time.
 I apologise that this is very much annoying.
 If at any stage you get an HTML 500 error, lemme know and I can try to remedy.
 
+## Security Features Digest:
+Implemented Security Features:
+1. Session ID Cookies 128 bits in length with 64 bits of entropy.
+2. Session ID Cookies have 0 lifetime (Requires logging back in with new session everytime session is killed).
+3. Passwords hashed and salted using BCrypt (Method: Hash(Password + Salt) = 60char hash including appended salt
+4. Mandatory 2FA Authentication implemented using a TOTP (Time-based One Time Password) secret - scanned and added to authenticator app of choice to generate passcodes.
+5. TOTP Secrets for 2FA encrypted with Sodium Crypto Secret Box (Takes Encryption key stored on-server in .env in combination with a 24-byte nonce to encrypt TOTP secrets for database storage). This means attackers cannot simply breach the database and acquire 2FA secrets of users, they would also have to compromise the entire server to access .env encryption key.
+6. Password Bruteforce protection implemented as a timeout of increasing length after several incorrect password attempts for a given username and given IP address.
+7. 2FA code bruteforce protection implemented as a timeout of increasing length after 3 incorrect 2FA code entries for given username+correct password and given IP address. Could run the maths to figure out how long a 2FA breach would statistically take.
+8. Strict types enforced (ie. if an argument is expecting an integer and receives a float, it will error out rather than attempting to cast to int).
+9. Rudimentary user-input sanitisation (white spaces stripped, length enforced, 2FA codes only checked numerically using RegEx). <-- More work needs doing here
 
+Future Security Features:
+1. Much more heavy duty user-string sanitisation (RegEx would be a friend here).
+2. Encrypt database for prod-build.
+3. Purge database credentials list (add secure password to root, remove additional account).
+4. Anything else?
+   
 
 ⠀⠀⠀⣴⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠘⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠿⣿⣿⣶⣶⣿⣇⠀⠀⣼⣿⠇⠀⠀⢀⣴⣿⠟⠉⠉⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⣼⣿⠇⢀⣤⣄⠀⠀⠀⠀⠀⠀⠀⣿⣿⠃⠀⠀⠀⠀⠀⠀⣠⣴⣿⠿⣿⣷⣄⠀⠉⢻⣿⣿⣷⣶⣿⡇⠀⠀⢠⣿⡟⠁⠀⠀⢀⣿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
