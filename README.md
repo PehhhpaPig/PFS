@@ -28,11 +28,12 @@ Implemented Security Features:
 
 Future Security Features:
 1. Much more heavy duty user-string sanitisation (RegEx would be a friend here).
-2. Encrypt database for prod-build.
-3. Purge database credentials list (add secure password to root, remove additional account).
-4. Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).
-5. Add CAPTCHA to further protect against bot bruteforcing.
-6. Anything else?
+2. User password strength mandates
+3. Encrypt database for prod-build.
+4. Purge database credentials list (add secure password to root, remove additional account).
+5. Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).
+6. Add CAPTCHA to further protect against bot bruteforcing (this is proving harder than expected)
+7. Anything else?
    
 
 ⠀⠀⠀⣴⣿⠟⠁⠀⠀⠀⠀⠀⠀⠀⠘⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠛⠿⣿⣿⣶⣶⣿⣇⠀⠀⣼⣿⠇⠀⠀⢀⣴⣿⠟⠉⠉⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
