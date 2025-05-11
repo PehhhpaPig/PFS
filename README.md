@@ -10,7 +10,7 @@
 You must then use these Authenticator codes to log in to your account each time.
 
 ## Aside:
-I apologise that this is very much a fuck around - it has not been fun for me either (jokes i kinda enjoyed it).
+I apologise that this is very much annoying.
 If at any stage you get an HTML 500 error, lemme know and I can try to remedy.
 
 
