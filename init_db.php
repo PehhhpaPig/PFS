@@ -98,6 +98,15 @@ $pdo->exec("ALTER TABLE users
   ADD COLUMN totp_secret CHAR(200)   DEFAULT NULL,   -- base32‑encoded key
   ADD COLUMN totp_enabled TINYINT(1) DEFAULT 0;     -- 0 = off, 1 = active");
 
+$pdo->exec("CREATE TABLE login_throttle (
+  username   VARCHAR(64)  NOT NULL,
+  ip_addr    VARCHAR(45)  NOT NULL,
+  fails      SMALLINT     NOT NULL DEFAULT 0,
+  lock_until DATETIME     DEFAULT NULL,
+  last_fail  DATETIME     DEFAULT NULL,
+  PRIMARY KEY (username, ip_addr)
+);
+");
 echo "Schema imported and sample data seeded ✔
 ";
 
