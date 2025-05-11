@@ -30,7 +30,7 @@ Future Security Features:
 1. Much more heavy duty user-string sanitisation (RegEx would be a friend here).
 2. Encrypt database for prod-build.
 3. Purge database credentials list (add secure password to root, remove additional account).
-4. Configure Apache to not display file endings in URL (ie. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).
+4. Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).
 5. Anything else?
    
 
