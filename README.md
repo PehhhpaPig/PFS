@@ -1,4 +1,4 @@
-# PFS V 0.6.0
+# PFS V 0.6.1
 
 ## Install Instructions using XAMPP:
 1. All files should be added to XAMPP htdocs folder, using the heirarchy as it appears in github (ie. htdocs/PFS/api/... and htdocs/PFS/public/... etc)
