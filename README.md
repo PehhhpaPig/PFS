@@ -1,11 +1,11 @@
-# PFS V 0.7.0
+# PFS V 0.7.1
 
 ## Install Instructions using XAMPP:
 1. All files should be added to XAMPP htdocs folder, using the heirarchy as it appears in github (ie. htdocs/PFS/api/... and htdocs/PFS/public/... etc)
 2. When all are added, start apache and mySQL. Create a database at browser address: http://localhost/phpmyadmin/index.php, and name it NuTracker.
 3. Under the SQL tab in this database, run all the queries inside PFS/init_db.php by hand (soz, it no longer works automatically, am trying to fix but am just a vibe coder)
 4. Once database is initialised and all files and folders are installed correctly (as shown in github repo), you can go to http://localhost/PFS/public/index.html.
-5. You can log-in as admin/admin123, or create a new account.
+5. You can log-in as username: admin / password: [message me for password], or create a new account.
 6. If you create a new account, you will be forced to add 2FA by scanning a QR code inside either Google Authenticator, or Microsoft Authenticator.
 You must then use these Authenticator codes to log in to your account each time.
 
