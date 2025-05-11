@@ -29,6 +29,9 @@ button{padding:.45rem 1rem;margin-top:1rem}
   <label id="passRow">New password
     <input id="pass" type="password" name="password" minlength="8">
   </label>
+  <label id="passRow">Confirm New password
+    <input id="pass2" type="password" name="password2" minlength="8">
+  </label>
 
   <button id="submitBtn">Next</button>
 </form>
@@ -47,6 +50,7 @@ $('resetForm').addEventListener('submit', async e => {
   if (step === 1) { fd.append('username', $('user').value.trim()); }
   if (step === 2) { fd.append('code', $('code').value.trim()); }
   if (step === 3) { fd.append('password', $('pass').value); }
+  if (step === 3) { fd.append('password2', $('pass2').value); }
 
   const res = await fetch('../api/auth/reset.php', {
     method:'POST', body:fd, credentials:'include',
