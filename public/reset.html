@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reset password</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:460px;margin:2rem auto}
+label{display:block;margin:.6rem 0 .2rem}input{width:100%;padding:.45rem}
+button{padding:.45rem 1rem;margin-top:1rem}
+#codeRow,#passRow{display:none}
+#msg{margin-top:1rem;color:red}
+</style>
+</head>
+<body>
+<h1>Reset password</h1>
+
+<form id="resetForm">
+  <!-- step 1: identify -->
+  <label id="userRow">Username
+    <input id="user" name="username" required>
+  </label>
+
+  <!-- step 2: 2‑factor -->
+  <label id="codeRow">Enter 6‑digit code
+    <input id="code" name="code" pattern="[0-9]{6}" maxlength="6" minlength="6">
+  </label>
+
+  <!-- step 3: new password -->
+  <label id="passRow">New password
+    <input id="pass" type="password" name="password" minlength="8">
+  </label>
+
+  <button id="submitBtn">Next</button>
+</form>
+
+<p id="msg"></p>
+
+<script type="module">
+const $ = id => document.getElementById(id);
+let step = 1;
+
+$('resetForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  $('msg').textContent = '';
+
+  const fd = new FormData();
+  if (step === 1) { fd.append('username', $('user').value.trim()); }
+  if (step === 2) { fd.append('code', $('code').value.trim()); }
+  if (step === 3) { fd.append('password', $('pass').value); }
+
+  const res = await fetch('../api/auth/reset.php', {
+    method:'POST', body:fd, credentials:'include',
+    headers:{ 'Accept':'application/json' }
+  }).then(r=>r.json());
+
+  if (res.error) { $('msg').textContent = '❌ ' + res.error; return; }
+
+  if (step === 1) {
+    step = 2;
+    $('userRow').hidden = true;
+    $('codeRow').style.display = 'block';
+    $('submitBtn').textContent = 'Verify code';
+    $('code').focus();
+  } else if (step === 2) {
+    step = 3;
+    $('codeRow').hidden = true;
+    $('passRow').style.display = 'block';
+    $('submitBtn').textContent = 'Set password';
+    $('pass').focus();
+  } else {
+    $('resetForm').hidden = true;
+    $('msg').style.color='green';
+    $('msg').innerHTML = '✅ Password reset, please <a href="index.html">Log in</a>';
+  }
+});
+</script>
+</body>
+</html>
