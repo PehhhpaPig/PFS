@@ -46,11 +46,74 @@ if (!$row) {
     echo json_encode(['error' => 'User not found.']); exit;
 }
 $decSecret = totp_decrypt($row['totp_secret']);
+/* ==============================================================
+   2‑factor brute‑force throttle  (phase = '2fa')
+   ============================================================== */
+
+   function json_out(array $arr, int $code = 200): never
+   {
+       http_response_code($code);
+       header('Content-Type: application/json; charset=utf-8');
+       echo json_encode($arr);
+       exit;
+   }
+   
+   $ip   = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+   $uid  = (int) $_SESSION['pre_2fa'];
+   $now  = date('Y-m-d H:i:s');
+   
+   /* ---------- load current record ---------- */
+   $sth = $pdo->prepare(
+       'SELECT fails, lock_until, last_fail
+          FROM login_throttle
+         WHERE username = ? AND ip_addr = ? AND phase = "2fa"'
+   );
+   $sth->execute([$uid, $ip]);
+   $rec = $sth->fetch(PDO::FETCH_ASSOC) ?: ['fails'=>0,'lock_until'=>null,'last_fail'=>null];
+   
+   /* ---------- still locked? ---------- */
+   if ($rec['lock_until'] && $now < $rec['lock_until']) {
+       json_out(['error'=>'Too many codes. Wait and try again.'], 429);
+   }
 /* Verify (±1 × 30 s window) */
 if (!Totp::verify($decSecret, $code)) {
-    echo json_encode(['error' => 'Invalid 6‑digit code.']); exit;
-}
+    $codeWasValid = /* result of Totp::verify() */ false;   // replace with real check
 
+if (!$codeWasValid)
+{
+    /* step‑1: bump fail counter */
+    $fails = $rec['fails'] + 1;
+
+    /* reset window if last fail older than 15 min */
+    if ($rec['last_fail'] && strtotime($rec['last_fail']) < time() - 900) {
+        $fails = 1;
+    }
+
+    /* step‑2: compute lock duration every 3rd fail */
+    $lock = null;
+    if ($fails % 3 === 0) {
+        $n    = ($fails / 3) - 1;        // 0,1,2,3…
+        $secs = 15 * (2 ** $n);          // 15,30,60,120…
+        $secs = min($secs, 900);         // cap at 15 min
+        $lock = date('Y-m-d H:i:s', time() + $secs);
+    }
+
+    /* step‑3: upsert row */
+    $pdo->prepare(
+        'REPLACE INTO login_throttle
+         (username, ip_addr, phase, fails, lock_until, last_fail)
+         VALUES (?, ?, "2fa", ?, ?, ?)'
+    )->execute([$uid, $ip, $fails, $lock, $now]);
+
+    json_out(['error'=>'Invalid 6‑digit code.'], 401);
+}
+}
+else{
+    $pdo->prepare(
+        'DELETE FROM login_throttle
+         WHERE username = ? AND ip_addr = ? AND phase = "2fa"'
+    )->execute([$uid, $ip]);
+}
 /* Promote session to fully authenticated */
 unset($_SESSION['pre_2fa']);
 $_SESSION['user_id'] = $uid;
