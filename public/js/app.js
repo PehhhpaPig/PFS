@@ -4,7 +4,9 @@ import { api, $, prefix } from './core.js';
 let pending2fa = false;          // flag between steps
 
 $('#loginBtn').onclick = async () => {
+  
   if (!pending2fa) {
+    $('#captcha').hidden = false;
     /* ---------- STEP 1 : username + password ---------- */
     const out = await api('/auth/login.php', {
       method : 'POST',
@@ -19,6 +21,7 @@ $('#loginBtn').onclick = async () => {
       $('#passwordRow').hidden = true;
       $('#codeRow').hidden     = false;
       $('#code').focus();
+      
     } else if (out.status === 'OK') {
       onLoginSuccess();
     } else {
@@ -27,10 +30,12 @@ $('#loginBtn').onclick = async () => {
   } else {
     /* ---------- STEP 2 : 6‑digit code ---------- */
     const codeValue = $('#code').value.replace(/\D/g, ''); 
+    const captchaValue = $('#captchaCode').value;
     if (codeValue.length !== 6) { alert('Enter 6 digits'); return; }
 
     const fd = new FormData();
     fd.append('code', codeValue);
+    fd.append('captch', captchaValue);
     const res = await fetch('../api/auth/verify_2fa.php', {
       method      : 'POST',
       body        : fd,                  // browser sets multipart header
@@ -39,7 +44,8 @@ $('#loginBtn').onclick = async () => {
     });
     const out = await res.json();        // <-- create a new `out`
 
-    if (out.ok || out.status === 'OK') { // whichever you return in PHP
+    if (out.ok || out.status === 'OK') {
+
       onLoginSuccess();
     } else {
       alert(out.error || 'Invalid code');
