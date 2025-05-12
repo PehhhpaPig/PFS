@@ -4,7 +4,7 @@
 
 # For macOS
 1. If not already installed, install HomeBrew (https://brew.sh/) onto MacOS using /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-2. Use the website instructions if unsure of this, or ask me
+   -- Use the website instructions if unsure of this, or ask me
 3. Download all code files as ZIP. Extract these files, rename the project folder from "pfs-main" to "PFS".
 4. Place this folder into HTDOCS, alongside the existing masteryLevels folder. Eg htdocs should contain a MasteryLevels folder, and also a PFS folder.
 5. Start mySQL and Apache inside the XAMPP manager
