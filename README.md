@@ -24,9 +24,6 @@
 6. If you create a new account, you will be forced to add 2FA by scanning a QR code inside either Google Authenticator, or Microsoft Authenticator.
 You must then use these Authenticator codes to log in to your account each time.
 
-## Aside:
-I apologise that this is very much annoying.
-If at any stage you get an HTML 500 error, lemme know and I can try to remedy.
 
 ## Security Features Digest:
 Implemented Security Features:
