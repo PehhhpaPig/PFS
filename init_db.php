@@ -1,3 +1,4 @@
+#!/usr/bin/env php
 <?php
 /** CLI usage: php init_db.php
  *  - creates the database & tables
@@ -16,11 +17,8 @@ $appUser  = $cfg['DB_USER'];
 $appPass  = $cfg['DB_PASS'];
 $dbName   = $cfg['DB_NAME'];
 
-$pdo = new PDO(
-    sprintf('mysql:host=%s;charset=utf8mb4', $cfg['DB_HOST'] ?? 'localhost'),
-    $rootUser, $rootPass,
-    [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-);
+$dsn = 'mysql:host=127.0.0.1;port=3306;charset=utf8mb4';
+$pdo = new PDO($dsn, 'root', ''); 
 
 $quotedPass = $pdo->quote($appPass);   // safe SQL literal e.g. 'secret'
 
