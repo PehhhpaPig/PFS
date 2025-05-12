@@ -1,6 +1,21 @@
 # PFS V 0.8.0
 
 ## Install Instructions using XAMPP:
+
+# For macOS
+1. If not already installed, install HomeBrew (https://brew.sh/) onto MacOS using /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+2. Use the website instructions if unsure of this, or ask me
+3. Download all code files as ZIP. Extract these files, rename the project folder from "pfs-main" to "PFS".
+4. Place this folder into HTDOCS, alongside the existing masteryLevels folder. Eg htdocs should contain a MasteryLevels folder, and also a PFS folder.
+5. Start mySQL and Apache inside the XAMPP manager
+6. In terminal, type command: brew install php
+7. Once install has completed, type command: php init_db.php
+8. This should print "Schema imported and sample data seeded \n Database and user initialised"
+9. If all these steps have completed correctly, you should now be able to visit localhost/PFS/public/index.html in a web browser.
+10. You should be able to log-in as admin / [password in messenger] or create a new account.
+11. Please let me know if you have any issues, I can try to fix.
+    
+# For Linux
 1. All files should be added to XAMPP htdocs folder, using the heirarchy as it appears in github (ie. htdocs/PFS/api/... and htdocs/PFS/public/... etc)
 2. When all are added, start apache and mySQL. Create a database at browser address: http://localhost/phpmyadmin/index.php, and name it NuTracker.
 3. Under the SQL tab in this database, run all the queries inside PFS/init_db.php by hand (soz, it no longer works automatically, am trying to fix but am just a vibe coder)
