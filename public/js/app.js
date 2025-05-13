@@ -48,7 +48,9 @@ $('#loginBtn').onclick = async () => {
 
       onLoginSuccess();
     } else {
-
+        if (out.captcha_required) {
+            document.getElementById("captcha").hidden = false;
+          }
       alert(out.error || 'Invalid code');
     }
   }

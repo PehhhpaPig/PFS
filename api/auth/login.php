@@ -53,14 +53,6 @@ if ($rec['lock_until'] && $now < $rec['lock_until']) {
 if ($_SESSION['captcha_required'] == true){
     json_out(['error'=>'Captcha Required!'], 418);
 }
-       // $securimage = new Securimage();
-    //if (($_SESSION['login_failures'] ?? 0) >= 2) {
-       // if (!$securimage->check($_POST['captcha_code'])) {
-          //  json_out(['error'=>'CAPTCHA incorrect', 'captcha_required'=>$_SESSION['login_failures']], 418); //based and tea pot-pilled
-           // exit;
-        //}
-   // }
-//}
 
 /* ---------------- password check ---------------- */
 if (!password_verify($pass, $usr['pw_hash'])) {

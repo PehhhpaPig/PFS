@@ -81,6 +81,7 @@ if (!Totp::verify($decSecret, $code)) {
 
 if (!$codeWasValid)
 {
+    $_SESSION['login_failures'] = ($_SESSION['login_failures'] ?? 0) + 1;
     /* step‑1: bump fail counter */
     $fails = $rec['fails'] + 1;
 
@@ -105,7 +106,8 @@ if (!$codeWasValid)
          VALUES (?, ?, "2fa", ?, ?, ?)'
     )->execute([$uid, $ip, $fails, $lock, $now]);
 
-    json_out(['error'=>'Invalid 6‑digit code.'], 401);
+    json_out(['error'=>'Invalid 6 digit code', 'captcha_required' => $_SESSION['login_failures'] >= 2], 401);
+    $_SESSION['captcha_required']=($_SESSION['login_failures'] >= 2);
 }
 }
 else{
@@ -115,6 +117,7 @@ else{
     )->execute([$uid, $ip]);
 }
 /* Promote session to fully authenticated */
+$_SESSION['login_failures'] = 0;
 unset($_SESSION['pre_2fa']);
 $_SESSION['user_id'] = $uid;
 $_SESSION['role']    = $row['role'];
