@@ -6,7 +6,6 @@ let pending2fa = false;          // flag between steps
 $('#loginBtn').onclick = async () => {
   
   if (!pending2fa) {
-    $('#captcha').hidden = false;
     /* ---------- STEP 1 : username + password ---------- */
     const out = await api('/auth/login.php', {
       method : 'POST',
@@ -25,17 +24,18 @@ $('#loginBtn').onclick = async () => {
     } else if (out.status === 'OK') {
       onLoginSuccess();
     } else {
+            if (out.captcha_required) {
+            document.getElementById("captcha").hidden = false;
+          }
       alert(out.error);
     }
   } else {
     /* ---------- STEP 2 : 6‑digit code ---------- */
     const codeValue = $('#code').value.replace(/\D/g, ''); 
-    const captchaValue = $('#captchaCode').value;
     if (codeValue.length !== 6) { alert('Enter 6 digits'); return; }
 
     const fd = new FormData();
     fd.append('code', codeValue);
-    fd.append('captch', captchaValue);
     const res = await fetch('../api/auth/verify_2fa.php', {
       method      : 'POST',
       body        : fd,                  // browser sets multipart header
@@ -48,6 +48,7 @@ $('#loginBtn').onclick = async () => {
 
       onLoginSuccess();
     } else {
+
       alert(out.error || 'Invalid code');
     }
   }

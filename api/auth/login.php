@@ -12,6 +12,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../db.php';     // loads PDO + start_secure_session()
+require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
 start_secure_session();
 header('Content-Type: application/json; charset=utf-8');
 
@@ -31,8 +32,9 @@ if ($user === '' || $pass === '') json_out(['error'=>'Missing fields'], 422);
 $stm = $pdo->prepare('SELECT id, pw_hash, role, totp_enabled FROM users WHERE username=?');
 $stm->execute([$user]);
 $usr = $stm->fetch(PDO::FETCH_ASSOC);
-if (!$usr) json_out(['error'=>'Invalid username or password'], 401);
-
+if (!$usr){
+    json_out(['error'=>'Invalid username or password'], 401);
+}
 /* ---------------- throttle look‑up ---------------- */
 $ip  = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 $now = date('Y-m-d H:i:s');
@@ -51,9 +53,16 @@ if ($rec['lock_until'] && $now < $rec['lock_until']) {
 
 /* ---------------- password check ---------------- */
 if (!password_verify($pass, $usr['pw_hash'])) {
-
+    $securimage = new Securimage();
+    if (($_SESSION['login_failures'] ?? 0) >= 2) {
+        if (!$securimage->check($_POST['captcha_code'])) {
+            json_out(['error'=>'CAPTCHA incorrect', 'captcha_required'=>$_SESSION['login_failures']], 418); //based and tea pot-pilled
+            exit;
+        }
+    }
     /* update failure counters */
     $fails = $rec['fails'] + 1;
+    $_SESSION['login_failures'] = ($_SESSION['login_failures'] ?? 0) + 1;
 
     /* reset 15‑min window */
     if ($rec['last_fail'] && strtotime($rec['last_fail']) < time() - 900) {
@@ -75,14 +84,15 @@ if (!password_verify($pass, $usr['pw_hash'])) {
          VALUES (?,?,?,?,?)')
         ->execute([$user, $ip, $fails, $lock, $now]);
 
-    json_out(['error'=>'Invalid username or password'], 401);
+    json_out(['error'=>'Invalid username or password', 'captcha_required' => $_SESSION['login_failures'] >= 1], 401);
 }
 
 /* ---------------- success: clear throttle ---------------- */
 $pdo->prepare(
     'DELETE FROM login_throttle WHERE username=? AND ip_addr=?')
     ->execute([$user, $ip]);
-
+//Clear login failures
+$_SESSION['login_failures'] = 0;
 /* ---------------- 2‑factor step ---------------- */
 if ((int)$usr['totp_enabled'] === 1) {
     $_SESSION['pre_2fa'] = $usr['id'];          // will be promoted in verify_2fa.php
