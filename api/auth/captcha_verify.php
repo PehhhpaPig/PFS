@@ -25,4 +25,8 @@ if ($stored instanceof \Securimage\CaptchaObject) {
 
 
 // CAPTCHA was correct
+//O dear god, this entire captcha flow is not my proudest moment
+//but it /looks/ like at works
+//fake it till ya make it
 $_SESSION['captcha_required']=true;
+header('Location: '.'/PFS/public/index.html');
