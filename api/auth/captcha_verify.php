@@ -1,19 +1,28 @@
 <?php
-declare(strict_types=1)
-start_secure_session();
-require_once 'securimage/securimage.php';
-function json_out(array $arr, int $http = 200): never {
-        http_response_code($http);
-        echo json_encode($arr); exit;
-    }
-$securimage = new Securimage();
+require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
+require_once dirname(__DIR__,2) . '/securimage/CaptchaObject.php'; 
+require_once  dirname(__DIR__,1) . '/db.php';
 
-if ($securimage->check($_POST['captcha_code']) == false) {
-    echo "<h3>⚠️ Incorrect CAPTCHA. Please try again.</h3>";
-    echo "<a href='captcha_form.php'>Go Back</a>";
-} else {
-    echo "<h3>✅ CAPTCHA Passed. Form can now be processed.</h3>";
-    echo "Welcome, " . htmlspecialchars($_POST['username']) . "!";
-    // Here you could handle form logic, store in database, etc.
+start_secure_session();
+
+header('Content-Type: application/json');
+
+
+$stored = $_SESSION['securimage_data'][''] ?? null;
+
+if (empty($_POST['captcha_code'])) {
+    json_out(['error'=>'Enter a Captcha Code'], 401);
+    exit;
 }
-?>
+
+if ($stored instanceof \Securimage\CaptchaObject) {
+    if(!(($stored->code_display)===$_POST['captcha_code'])){
+        json_out(['error'=>'Enter a Captcha Code'], 401);
+    }
+} else {
+    json_out(['error'=>'No valid captcha in session'], 418);
+}
+
+
+// CAPTCHA was correct
+$_SESSION['captcha_required']=true;

@@ -50,16 +50,21 @@ $rec = $thr->fetch(PDO::FETCH_ASSOC) ?: ['fails'=>0,'lock_until'=>null,'last_fai
 if ($rec['lock_until'] && $now < $rec['lock_until']) {
     json_out(['error'=>'Too many attempts. Try again later.'], 429);
 }
+if ($_SESSION['captcha_required'] == true){
+    json_out(['error'=>'Captcha Required!'], 418);
+}
+       // $securimage = new Securimage();
+    //if (($_SESSION['login_failures'] ?? 0) >= 2) {
+       // if (!$securimage->check($_POST['captcha_code'])) {
+          //  json_out(['error'=>'CAPTCHA incorrect', 'captcha_required'=>$_SESSION['login_failures']], 418); //based and tea pot-pilled
+           // exit;
+        //}
+   // }
+//}
 
 /* ---------------- password check ---------------- */
 if (!password_verify($pass, $usr['pw_hash'])) {
-    $securimage = new Securimage();
-    if (($_SESSION['login_failures'] ?? 0) >= 2) {
-        if (!$securimage->check($_POST['captcha_code'])) {
-            json_out(['error'=>'CAPTCHA incorrect', 'captcha_required'=>$_SESSION['login_failures']], 418); //based and tea pot-pilled
-            exit;
-        }
-    }
+
     /* update failure counters */
     $fails = $rec['fails'] + 1;
     $_SESSION['login_failures'] = ($_SESSION['login_failures'] ?? 0) + 1;
@@ -85,6 +90,7 @@ if (!password_verify($pass, $usr['pw_hash'])) {
         ->execute([$user, $ip, $fails, $lock, $now]);
 
     json_out(['error'=>'Invalid username or password', 'captcha_required' => $_SESSION['login_failures'] >= 1], 401);
+    $_SESSION['captcha_required']=true;
 }
 
 /* ---------------- success: clear throttle ---------------- */
