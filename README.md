@@ -38,10 +38,11 @@ Implemented Security Features:
 9. Strict types enforced (ie. if an argument is expecting an integer and receives a float, it will error out rather than attempting to cast to int).
 10. Rudimentary user-input sanitisation (white spaces stripped, length enforced, 2FA codes only checked numerically using RegEx). <-- More work needs doing here
 11. CAPTCHA added to stop bruteforce attacks against login credentials and 2FA TOTP verification codes on login and password reset.
+12. User passwords for registration and password resets are mandated to be at least 8 characters including symbol, uppercase and lowercase, and number chars.
 
 Future Security Features:
 1. Much more heavy duty user-string sanitisation (RegEx would be a friend here).
-2. User password strength mandates
+2. ~~User password strength mandates~~✅Completed!✅
 3. Encrypt database for prod-build.
 4. Purge database credentials list (add secure password to root, remove additional account).
 5. Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).
