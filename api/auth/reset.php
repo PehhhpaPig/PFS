@@ -3,38 +3,38 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../db.php';
+require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
 require_once __DIR__ . '/../lib/Totp.php';
 require_once dirname(__DIR__,2) . '/vendor/autoload.php';      // loads bcrypt + totp helpers
 start_secure_session();
 header('Content-Type: application/json; charset=utf-8');
-
 /* handy JSON responder */
-function out($arr, int $code=200): never {
-    http_response_code($code);
-    echo json_encode($arr);
-    exit;
+function json_out(array $arr, int $http = 200): never {
+    http_response_code($http);
+    echo json_encode($arr); exit;
 }
 
 /* expire reset session after 10 min */
-if (isset($_SESSION['reset_start']) &&
-    time() - $_SESSION['reset_start'] > 600) {
-    session_unset();
-}
+//if (isset($_SESSION['reset_start']) &&
+   // time() - $_SESSION['reset_start'] > 600) {
+   // session_unset();
+//}
 
 /* ---------- STEP 1 – username ---------- */
 if (isset($_POST['username'])) {
     $u = trim($_POST['username']);
     $st = $pdo->prepare('SELECT id FROM users WHERE username = ?');
     $st->execute([$u]);
-    if (!$row = $st->fetch()) { out(['error'=>'User not found'], 404); }
+    if (!$row = $st->fetch()) { json_out(['error'=>'User not found'], 404); }
     $_SESSION['reset_uid']   = (int) $row['id'];
+    $uid   = (int) $_SESSION['reset_uid'] ;
     $_SESSION['reset_start'] = time();
-    out(['ok'=>true]);                           // goto step 2
+    json_out(['ok'=>true]);                           // goto step 2
 }
 
 /* ---------- guard: uid must exist ---------- */
 if (!isset($_SESSION['reset_uid'])) {
-    out(['error'=>'Reset not initiated'], 400);
+    json_out(['error'=>'Reset not initiated'], 400);
 }
 
 /* ---------- STEP 2 – 6‑digit code ---------- */
@@ -46,10 +46,20 @@ if (isset($_POST['code']) && !isset($_SESSION['reset_verified'])) {
     $st->execute([$_SESSION['reset_uid']]);
     $secret = totp_decrypt($st->fetchColumn());
 
-    if (!Totp::verify($secret,$code,3)) { out(['error'=>'Invalid code'],401); }
+    if (!Totp::verify($secret,$code)) { 
+        $codeWasValid = /* result of Totp::verify() */ false;   // replace with real check
+
+        if (!$codeWasValid){
+            json_out(['error'=>'Invalid 6 digit code', 'captcha_required' => true], 401);
+            $_SESSION['captcha_required']=true;
+            }
+    }
+    else{
+        $_SESSION['captcha_required']=false;
+    }
 
     $_SESSION['reset_verified'] = true;
-    out(['ok'=>true]);                           // goto step 3
+    json_out(['ok'=>true]);                           // goto step 3
 }
 
 /* ---------- STEP 3 – new password ---------- */
@@ -63,8 +73,8 @@ if (isset($_POST['password']) && $_SESSION['reset_verified']===true) {
         ->execute([$hash, $_SESSION['reset_uid']]);
 
     session_unset(); session_destroy();          // clean slate
-    out(['ok'=>true]);
+    json_out(['ok'=>true]);
 }
 
 /* anything else */
-out(['error'=>'Bad request'],400);
+json_out(['error'=>'Bad request'],400);

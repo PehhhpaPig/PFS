@@ -8,7 +8,7 @@
 body{font-family:system-ui,sans-serif;max-width:460px;margin:2rem auto}
 label{display:block;margin:.6rem 0 .2rem}input{width:100%;padding:.45rem}
 button{padding:.45rem 1rem;margin-top:1rem}
-#codeRow,#passRow{display:none}
+#codeRow,#passRow,#passRow2{display:none}
 #msg{margin-top:1rem;color:red}
 </style>
 </head>
@@ -30,19 +30,27 @@ button{padding:.45rem 1rem;margin-top:1rem}
   <label id="passRow">New password
     <input id="pass" type="password" name="password" minlength="8">
   </label>
-  <label id="passRow">Confirm New password
+  <label id="passRow2">Confirm New password
     <input id="pass2" type="password" name="password2" minlength="8">
   </label>
 
   <button id="submitBtn">Next</button>
 </form>
+    <form id="captcha" hidden>
+        <img id="captchaImg" src="/PFS/securimage/securimage_show.php" alt="CAPTCHA Image" /><br><br>
+        <input type="text" name="captcha_code" size="10" maxlength="6" placeholder="Enter CAPTCHA" required>
+        <a href="#" onclick="document.getElementById('captchaImg').src = '/PFS/securimage/securimage_show.php?' + Date.now(); return false;">[ Different Image ]</a>
+        <br><br>
+        <input type="submit" value="Submit">
+        <p id="captchaHint" style="color: red; font-weight: bold;"></p>
+    </form>
 
 <p id="msg"></p>
 
 <script type="module">
 const $ = id => document.getElementById(id);
 let step = 1;
-
+setResetFormDisabled(false);
 $('resetForm').addEventListener('submit', async e => {
   e.preventDefault();
   $('msg').textContent = '';
@@ -53,11 +61,18 @@ $('resetForm').addEventListener('submit', async e => {
   if (step === 3) { fd.append('password', $('pass').value); }
   if (step === 3) { fd.append('password2', $('pass2').value); }
 
-  const res = await fetch('../api/auth/reset.php', {
+  const response = await fetch('../api/auth/reset.php', {
     method:'POST', body:fd, credentials:'include',
     headers:{ 'Accept':'application/json' }
-  }).then(r=>r.json());
-
+  })
+  const res = await response.json();
+  if (res.captcha_required) {
+  alert(res.error + ". CAPTCHA must now be completed before resetting password!");
+  $('captcha').hidden = false;
+  $('captchaImg').src = "/PFS/securimage/securimage_show.php?" + Date.now();
+  setResetFormDisabled(true); // ✅ lock form immediately
+  return;
+}
   if (res.error) { $('msg').textContent = '❌ ' + res.error; return; }
 
   if (step === 1) {
@@ -70,12 +85,67 @@ $('resetForm').addEventListener('submit', async e => {
     step = 3;
     $('codeRow').hidden = true;
     $('passRow').style.display = 'block';
+    $('passRow2').style.display = 'block';
     $('submitBtn').textContent = 'Set password';
     $('pass').focus();
+    $('pass2').focus();
   } else {
     $('resetForm').hidden = true;
     $('msg').style.color='green';
     $('msg').innerHTML = '✅ Password reset, please <a href="index.html">Log in</a>';
+  }
+});
+function setResetFormDisabled(state) {
+  const inputs = document.querySelectorAll('#resetForm input, #submitBtn');
+  inputs.forEach(el => el.disabled = state);
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const captchaForm = document.getElementById("captcha");
+  const captchaImg = document.getElementById("captchaImg");
+  const captchaHint = document.getElementById("captchaHint");
+  const submitBtn = document.getElementById("submitBtn");
+
+  if (captchaForm) {
+    captchaForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const code = captchaForm.querySelector("input[name='captcha_code']").value;
+
+      try {
+        const response = await fetch("/PFS/api/auth/captcha_verify.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ captcha_code: code })
+        });
+
+        const result = await response.json();
+
+        captchaHint.textContent = ""; // clear previous
+
+        if (result.status === "ok") {
+          alert(result.message);
+          captchaForm.hidden = true;
+          setResetFormDisabled(false);
+
+        } else {
+          alert(result.message + " Reset form is locked until CAPTCHA is succesfull." || "Incorrect CAPTCHA" + ", login form is locked until CAPTCHA is succesfull.");
+          // Block login fields if CAPTCHA is failed
+          setResetFormDisabled(true);
+
+          if (result.hint) {
+            captchaHint.textContent = result.hint;
+          }
+
+          if (result.reload && captchaImg) {
+            captchaImg.src = "/PFS/securimage/securimage_show.php?" + Date.now();
+          }
+        }
+
+      } catch (err) {
+        console.error("CAPTCHA verification failed:", err);
+        alert("Unable to verify CAPTCHA.");
+      }
+    });
   }
 });
 </script>
