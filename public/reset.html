@@ -28,10 +28,11 @@ button{padding:.45rem 1rem;margin-top:1rem}
 
   <!-- step 3: new password -->
   <label id="passRow">New password
-    <input id="pass" type="password" name="password" minlength="8">
+    <input id="pass" type="password" name="password" minlength="8" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}"
+    title="Must include uppercase, lowercase, a number, and a symbol">
   </label>
   <label id="passRow2">Confirm New password
-    <input id="pass2" type="password" name="password2" minlength="8">
+    <input id="pass2" type="password" name="password2" minlength="8" required>
   </label>
 
   <button id="submitBtn">Next</button>

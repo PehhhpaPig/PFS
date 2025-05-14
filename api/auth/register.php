@@ -7,7 +7,9 @@ require_once dirname(__DIR__,2) . '/vendor/autoload.php';
 
 start_secure_session();
 header('Content-Type: application/json; charset=utf-8');
-
+function is_strong_password($password) {
+    return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/', $password);
+}
 /* STEP 2 – verify first TOTP code */
 if(isset($_POST['code'],$_SESSION['pending_uid'],$_SESSION['pending_secret'])){
     if(!Totp::verify($_SESSION['pending_secret'],trim($_POST['code']))){
@@ -22,6 +24,11 @@ if(isset($_POST['code'],$_SESSION['pending_uid'],$_SESSION['pending_secret'])){
 /* STEP 1 – create user, return otpauth URI */
 $u=trim($_POST['username']??''); $p=$_POST['password']??''; $c=$_POST['confirm']??'';
 if($u==''||strlen($p)<8||$p!==$c){echo json_encode(['error'=>'Invalid input.']);exit;}
+if (!is_strong_password($p)) {
+    json_out([
+        'error' => 'Password must be at least 8 characters and include upper/lowercase letters, numbers, and a symbol.'
+    ], 400);exit;
+}
 $ex=$pdo->prepare('SELECT 1 FROM users WHERE username=?');$ex->execute([$u]);
 if($ex->fetch()){echo json_encode(['error'=>'Username taken.']);exit;}
 

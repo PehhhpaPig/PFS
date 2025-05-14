@@ -21,7 +21,8 @@
     <input name="username" required pattern=".{3,32}">
   </label>
   <label>Password
-    <input type="password" name="password" required minlength="8">
+    <input type="password" name="password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}"
+    title="Must include uppercase, lowercase, a number, and a symbol">
   </label>
   <label>Confirm Password
     <input type="password" name="confirm" required minlength="8">

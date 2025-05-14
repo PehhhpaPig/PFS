@@ -15,11 +15,13 @@ function json_out(array $arr, int $http = 200): never {
 }
 
 /* expire reset session after 10 min */
-//if (isset($_SESSION['reset_start']) &&
-   // time() - $_SESSION['reset_start'] > 600) {
-   // session_unset();
-//}
-
+if (isset($_SESSION['reset_start']) &&
+    time() - $_SESSION['reset_start'] > 600) {
+    session_unset();
+}
+function is_strong_password($password) {
+    return preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/', $password);
+}
 /* ---------- STEP 1 – username ---------- */
 if (isset($_POST['username'])) {
     $u = trim($_POST['username']);
@@ -67,6 +69,11 @@ if (isset($_POST['password']) && $_SESSION['reset_verified']===true) {
     $pass = $_POST['password'];
     $pass2 = $_POST['password2'];
     if (strlen($pass)<8) out(['error'=>'Password too short'],422);
+    if (!is_strong_password($pass)) {
+    json_out([
+        'error' => 'Password must be at least 8 characters and include upper/lowercase letters, numbers, and a symbol.'
+    ], 400);exit;
+}
     if ($pass!==$pass2) {echo json_encode(['error'=>'Passwords must match.']);exit;}
     $hash = password_hash($pass, PASSWORD_BCRYPT, ['cost'=>12]);
     $pdo->prepare('UPDATE users SET pw_hash=? WHERE id=?')
