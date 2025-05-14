@@ -15,7 +15,7 @@
 10. You should be able to log-in as admin / [password in messenger] or create a new account.
 11. Please let me know if you have any issues, I can try to fix.
     
-# For Linux
+# For Linux (these instructions are outdated, but fair sure it only impacts me lol)
 1. All files should be added to XAMPP htdocs folder, using the heirarchy as it appears in github (ie. htdocs/PFS/api/... and htdocs/PFS/public/... etc)
 2. When all are added, start apache and mySQL. Create a database at browser address: http://localhost/phpmyadmin/index.php, and name it NuTracker.
 3. Under the SQL tab in this database, run all the queries inside PFS/init_db.php by hand (has been reconfigured for Mac instead)
