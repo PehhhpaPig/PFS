@@ -1,4 +1,4 @@
-# PFS V 0.8.6
+# PFS V 0.9.0
 
 ## Install Instructions using XAMPP:
 
@@ -30,13 +30,14 @@ Implemented Security Features:
 1. Front-end vs Back-end seperation. Front-end only contains .html and JavaScript files. All back-end files (.php) are not shown to user, instead uses POST request to communicate with these back-end files. This prevents users from viewing application files source code. 
 2. Session ID Cookies 128 bits in length with 64 bits of entropy.
 3. Session ID Cookies have 0 lifetime (Requires logging back in with new session everytime session is killed).
-4. Passwords hashed and salted using BCrypt (Method: Hash(Password + Salt) = 60char hash including appended salt.
+4. Passwords hashed and salted using BCrypt (Method: Hash(Password + Salt) = 60char hash including appended salt.)
 5. Mandatory 2FA Authentication implemented using a TOTP (Time-based One Time Password) secret - scanned and added to authenticator app of choice via generated QR code to generate passcodes.
 6. TOTP Secrets for 2FA encrypted with Sodium Crypto Secret Box producing 94char encrypted TOTP secret (Takes Encryption key stored on-server in .env in combination with a 24-byte nonce to encrypt TOTP secrets for database storage). This means attackers cannot simply breach the database and acquire 2FA secrets of users, they would also have to compromise the entire server to access .env encryption key.
 7. Password Bruteforce protection implemented as a timeout of increasing length after several incorrect password attempts for a given username and given IP address.
 8. 2FA code bruteforce protection implemented as a timeout of increasing length after 3 incorrect 2FA code entries for given username+correct password and given IP address. Double check my maths on this, but should statistically take ~16 months of bruteforcing from static IP address to bruteforce TOTP code (7/1000000 chance of correctly guessed code per attempt, after initial 18 wrong attempts lockout is maxed at 12 attempts allowed per hour). Obviously, dynamic IP cycling would circumvent this, probs should look into lockout for username rather than IP.
 9. Strict types enforced (ie. if an argument is expecting an integer and receives a float, it will error out rather than attempting to cast to int).
 10. Rudimentary user-input sanitisation (white spaces stripped, length enforced, 2FA codes only checked numerically using RegEx). <-- More work needs doing here
+11. CAPTCHA added to stop bruteforce attacks against login credentials and 2FA TOTP verification codes on login and password reset.
 
 Future Security Features:
 1. Much more heavy duty user-string sanitisation (RegEx would be a friend here).
@@ -44,7 +45,7 @@ Future Security Features:
 3. Encrypt database for prod-build.
 4. Purge database credentials list (add secure password to root, remove additional account).
 5. Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).
-6. Add CAPTCHA to further protect against bot bruteforcing (this is proving harder than expected)
+6. ~~Add CAPTCHA to further protect against bot bruteforcing (this is proving harder than expected)~~
 7. Anything else?
    
 
