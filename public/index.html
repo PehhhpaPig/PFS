@@ -5,15 +5,9 @@
   <title>NuTracker</title>
   <link rel="stylesheet" href="css/style.css">
   <script type="module" defer src="js/app.js"></script>
-  <style>
-    body{font-family:system-ui;margin:1rem;max-width:900px}
-    table{border-collapse:collapse;width:100%}
-    th,td{border:1px solid #ccc;padding:.3rem;text-align:left}
-    thead{background:#f3f3f3}
-    input,button{margin:.2rem}
-  </style>
 </head>
 <body>
+  <div class="container">
   <h1 id="header">Please Log In to NuTracker</h1>
 
   <!-- Auth -->
@@ -29,7 +23,7 @@
     <p><a href="reset.html">Forgot password?</a></p>
     <a href="register.html">Register</a>
     
-    <form id="captcha" hidden>
+    <form id="captcha" hidden style="margin-top:2rem">
         <img id="captchaImg" src="/PFS/securimage/securimage_show.php" alt="CAPTCHA Image" /><br><br>
         <input type="text" name="captcha_code" size="10" maxlength="6" placeholder="Enter CAPTCHA" required>
         <a href="#" onclick="document.getElementById('captchaImg').src = '/PFS/securimage/securimage_show.php?' + Date.now(); return false;">[ Different Image ]</a>
@@ -45,20 +39,21 @@
     <!-- Scan panel -->
     <h2>Scan Tag</h2>
     <input id="tagInput" placeholder="Tag ID (hex)"><button id="scanBtn">Submit</button>
-
+    <br><br><br>
     <h2>Add Item</h2>
     <input id="itemName" placeholder="Name">
     <input id="itemStock" type="number" min="0" placeholder="Stock">
     <input id="itemLoc"   placeholder="Location">
     <input id="itemTag"   placeholder="RFID (hex optional)">
+    <br>
     <button id="addItemBtn">Add</button>
-
+    <br><br><br>
     <h2>Items</h2>
     <table>
      <thead><tr><th>ID</th><th>Name</th><th>Stock</th><th>Location</th><th>RFID Tag</th><th></th></tr></thead>
      <tbody id="itemsBody"></tbody>
     </table>
-
+    <br><br><br>
     <!-- Scan history -->
     <h2>Recent Scans</h2>
     <table>
@@ -66,7 +61,8 @@
       <tbody id="scansBody"></tbody>
     </table>
 
-    <button onclick="location.reload()">Logout</button>
+    <button class="logout" onclick="location.reload()">Logout</button>
   </section>
+  </div>
 </body>
 </html>

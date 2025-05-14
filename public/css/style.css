@@ -119,4 +119,19 @@
     body{font-size:.93rem}
     table{font-size:.92rem}
   }
+  form + form, .form-group + .form-group {
+  margin-top: 2rem;
+}
+h2 + table {
+  margin-top: .6rem;
+}
+button.logout {
+  background: var(--clr-danger);
+  border-color: var(--clr-danger);
+  color: #fff;
+}
+button.logout:hover {
+  background: #a71d1d;
+  border-color: #a71d1d;
+}
   
