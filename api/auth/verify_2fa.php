@@ -106,8 +106,8 @@ if (!$codeWasValid)
          VALUES (?, ?, "2fa", ?, ?, ?)'
     )->execute([$uid, $ip, $fails, $lock, $now]);
 
-    json_out(['error'=>'Invalid 6 digit code', 'captcha_required' => $_SESSION['login_failures'] >= 2], 401);
-    $_SESSION['captcha_required']=($_SESSION['login_failures'] >= 2);
+    json_out(['error'=>'Invalid 6 digit code', 'captcha_required' => $_SESSION['login_failures'] >= 1], 401);
+    $_SESSION['captcha_required']=($_SESSION['login_failures'] >= 1);
 }
 }
 else{

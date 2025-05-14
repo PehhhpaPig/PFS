@@ -11,13 +11,22 @@ header('Content-Type: application/json');
 $stored = $_SESSION['securimage_data'][''] ?? null;
 
 if (empty($_POST['captcha_code'])) {
-    json_out(['error'=>'Enter a Captcha Code'], 401);
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Please enter the CAPTCHA code.'
+    ]);
     exit;
 }
 
 if ($stored instanceof \Securimage\CaptchaObject) {
     if(!(($stored->code_display)===$_POST['captcha_code'])){
-        echo "incorrect";
+            echo json_encode([
+        'status' => 'error',
+        'message' => 'Incorrect CAPTCHA. Please try again.',
+        'reload' => true,
+        'hint' => 'Check if letters are uppercase or lowercase.'
+    ]);
+    exit;
     }
 } else {
     json_out(['error'=>'No valid captcha in session'], 418);
@@ -29,4 +38,9 @@ if ($stored instanceof \Securimage\CaptchaObject) {
 //but it /looks/ like at works
 //fake it till ya make it
 $_SESSION['captcha_required']=false;
-header('Location: '.'/PFS/public/index.html');
+
+echo json_encode([
+    'status' => 'ok',
+    'message' => 'CAPTCHA verification successful. You may now log in.',
+    'nextStep' => 'enableLogin'
+]);

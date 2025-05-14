@@ -2,7 +2,7 @@
 import { api, $, prefix } from './core.js';
 
 let pending2fa = false;          // flag between steps
-
+loginBtn.disabled = false;
 $('#loginBtn').onclick = async () => {
   
   if (!pending2fa) {
@@ -25,9 +25,60 @@ $('#loginBtn').onclick = async () => {
       onLoginSuccess();
     } else {
             if (out.captcha_required) {
-            document.getElementById("captcha").hidden = false;
+              document.getElementById("captcha").hidden = false;
+              document.addEventListener("DOMContentLoaded", () => {
+  const captchaForm = document.getElementById("captcha");
+  const captchaImg = document.getElementById("captchaImg");
+  const captchaHint = document.getElementById("captchaHint");
+  const loginBtn = document.getElementById("loginBtn");
+
+  if (captchaForm) {
+    captchaForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const code = captchaForm.querySelector("input[name='captcha_code']").value;
+
+      try {
+        const response = await fetch("/PFS/api/auth/captcha_verify.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ captcha_code: code })
+        });
+
+        const result = await response.json();
+
+        captchaHint.textContent = ""; // clear previous
+
+        if (result.status === "ok") {
+          alert(result.message);
+          captchaForm.hidden = true;
+
+          // Optional: Enable login button again
+          if (loginBtn) loginBtn.disabled = false;
+
+        } else {
+          alert(result.message || "Incorrect CAPTCHA");
+
+          if (result.hint) {
+            captchaHint.textContent = result.hint;
+          }
+
+          if (result.reload && captchaImg) {
+            captchaImg.src = "/PFS/securimage/securimage_show.php?" + Date.now();
+          }
+        }
+
+      } catch (err) {
+        console.error("CAPTCHA verification failed:", err);
+        alert("Unable to verify CAPTCHA.");
+      }
+    });
+  }
+});
+
           }
       alert(out.error);
+      loginBtn.disabled = true;
     }
   } else {
     /* ---------- STEP 2 : 6‑digit code ---------- */
@@ -50,8 +101,59 @@ $('#loginBtn').onclick = async () => {
     } else {
         if (out.captcha_required) {
             document.getElementById("captcha").hidden = false;
+            document.addEventListener("DOMContentLoaded", () => {
+  const captchaForm = document.getElementById("captcha");
+  const captchaImg = document.getElementById("captchaImg");
+  const captchaHint = document.getElementById("captchaHint");
+  const loginBtn = document.getElementById("loginBtn");
+
+  if (captchaForm) {
+    captchaForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const code = captchaForm.querySelector("input[name='captcha_code']").value;
+
+      try {
+        const response = await fetch("/PFS/api/auth/captcha_verify.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ captcha_code: code })
+        });
+
+        const result = await response.json();
+
+        captchaHint.textContent = ""; // clear previous
+
+        if (result.status === "ok") {
+          alert(result.message);
+          captchaForm.hidden = true;
+
+          // Optional: Enable login button again
+          if (loginBtn) loginBtn.disabled = false;
+
+        } else {
+          alert(result.message || "Incorrect CAPTCHA");
+
+          if (result.hint) {
+            captchaHint.textContent = result.hint;
+          }
+
+          if (result.reload && captchaImg) {
+            captchaImg.src = "/PFS/securimage/securimage_show.php?" + Date.now();
+          }
+        }
+
+      } catch (err) {
+        console.error("CAPTCHA verification failed:", err);
+        alert("Unable to verify CAPTCHA.");
+      }
+    });
+  }
+});
+
           }
       alert(out.error || 'Invalid code');
+      loginBtn.disabled = true;
     }
   }
 };
@@ -124,3 +226,53 @@ function loadScans() {
       `<tr><td>${r.id}</td><td>${r.tag_id}</td><td>${r.username}</td><td>${r.scanned_at}</td></tr>`).join('');
   });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const captchaForm = document.getElementById("captcha");
+  const captchaImg = document.getElementById("captchaImg");
+  const captchaHint = document.getElementById("captchaHint");
+  const loginBtn = document.getElementById("loginBtn");
+
+  if (captchaForm) {
+    captchaForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const code = captchaForm.querySelector("input[name='captcha_code']").value;
+
+      try {
+        const response = await fetch("/PFS/api/auth/captcha_verify.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({ captcha_code: code })
+        });
+
+        const result = await response.json();
+
+        captchaHint.textContent = ""; // clear previous
+
+        if (result.status === "ok") {
+          alert(result.message);
+          captchaForm.hidden = true;
+          loginBtn.disabled = false;
+
+        } else {
+          alert(result.message + ", login form is locked until CAPTCHA is succesfull." || "Incorrect CAPTCHA" + ", login form is locked until CAPTCHA is succesfull.");
+          // Block login fields if CAPTCHA is failed
+          loginBtn.disabled = true;
+
+          if (result.hint) {
+            captchaHint.textContent = result.hint;
+          }
+
+          if (result.reload && captchaImg) {
+            captchaImg.src = "/PFS/securimage/securimage_show.php?" + Date.now();
+          }
+        }
+
+      } catch (err) {
+        console.error("CAPTCHA verification failed:", err);
+        alert("Unable to verify CAPTCHA.");
+      }
+    });
+  }
+});

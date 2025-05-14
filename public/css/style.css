@@ -24,7 +24,10 @@
     background:var(--clr-bg);
     line-height:1.5;
   }
-  
+  .disabled-input {
+  background-color: #eee;
+  pointer-events: none;
+}
   /* content wrapper (centres forms / dashboard) */
   .container{
     max-width:600px;margin:3rem auto;padding:0 1rem
