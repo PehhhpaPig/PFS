@@ -19,14 +19,14 @@
 <!-- STEP 1 -->
 <form id="credsForm">
   <label>Username
-    <input name="username" required pattern=".{3,32}">
+    <input name="username" required pattern=".{3,32}" autocomplete="off">
   </label>
   <label>Password
-    <input type="password" name="password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}"
+    <input type="password" name="password" required autocomplete="off" minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}"
     title="Must include uppercase, lowercase, a number, and a symbol">
   </label>
   <label>Confirm Password
-    <input type="password" name="confirm" required minlength="8">
+    <input type="password" name="confirm" autocomplete="off" required minlength="8">
   </label>
   <button>Next: Scan QR</button>
 </form>
@@ -41,7 +41,7 @@
              pattern="[0-9]{6}"
              maxlength="6" minlength="6"
              placeholder="123456"
-             required>
+             required autocomplete="off">
     </label>
     <button>Verify & Finish</button>
   </form>

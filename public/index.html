@@ -13,11 +13,11 @@
   <!-- Auth -->
   <section id="auth">
     <div id="passwordRow">
-      <input id="user" placeholder="Username">
-      <input id="pass" type="password" placeholder="Password">
+      <input id="user" placeholder="Username" autocomplete="off" required>
+      <input id="pass" type="password" placeholder="Password" autocomplete="off" required>
     </div>
     <div id="codeRow" hidden>
-      <input id="code" placeholder="6‑digit code">
+      <input id="code" placeholder="6‑digit code" autocomplete="off">
     </div>
     <button id="loginBtn">Login</button>
     <p><a href="reset.html">Forgot password?</a></p>
@@ -25,7 +25,7 @@
     
     <form id="captcha" hidden style="margin-top:2rem">
         <img id="captchaImg" src="/PFS/securimage/securimage_show.php" alt="CAPTCHA Image" /><br><br>
-        <input type="text" name="captcha_code" size="10" maxlength="6" placeholder="Enter CAPTCHA" required>
+        <input type="text" name="captcha_code" size="10" maxlength="6" placeholder="Enter CAPTCHA" required autocomplete="off">
         <a href="#" onclick="document.getElementById('captchaImg').src = '/PFS/securimage/securimage_show.php?' + Date.now(); return false;">[ Different Image ]</a>
         <br><br>
         <input type="submit" value="Submit">
@@ -38,13 +38,13 @@
   <section id="app" hidden>
     <!-- Scan panel -->
     <h2>Scan Tag</h2>
-    <input id="tagInput" placeholder="Tag ID (hex)"><button id="scanBtn">Submit</button>
+    <input id="tagInput" placeholder="Tag ID (hex)" autocomplete="off"><button id="scanBtn">Submit</button>
     <br><br><br>
     <h2>Add Item</h2>
-    <input id="itemName" placeholder="Name">
-    <input id="itemStock" type="number" min="0" placeholder="Stock">
-    <input id="itemLoc"   placeholder="Location">
-    <input id="itemTag"   placeholder="RFID (hex optional)">
+    <input id="itemName" placeholder="Name" autocomplete="off" required>
+    <input id="itemStock" type="number" min="0" placeholder="Stock" autocomplete="off" required numeric>
+    <input id="itemLoc"   placeholder="Location" autocomplete="off" required>
+    <input id="itemTag"   placeholder="RFID (hex optional)" autocomplete="off">
     <br>
     <button id="addItemBtn">Add</button>
     <br><br><br>

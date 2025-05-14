@@ -19,21 +19,21 @@ button{padding:.45rem 1rem;margin-top:1rem}
 <form id="resetForm">
   <!-- step 1: identify -->
   <label id="userRow">Username
-    <input id="user" name="username" required>
+    <input id="user" name="username" required autocomplete="off">
   </label>
 
   <!-- step 2: 2‑factor -->
   <label id="codeRow">Enter 6‑digit code
-    <input id="code" name="code" pattern="[0-9]{6}" maxlength="6" minlength="6">
+    <input id="code" name="code" pattern="[0-9]{6}" maxlength="6" minlength="6" autocomplete="off">
   </label>
 
   <!-- step 3: new password -->
   <label id="passRow">New password
     <input id="pass" type="password" name="password" minlength="8" required pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}"
-    title="Must include uppercase, lowercase, a number, and a symbol">
+    title="Must include uppercase, lowercase, a number, and a symbol" autocomplete="off">
   </label>
   <label id="passRow2">Confirm New password
-    <input id="pass2" type="password" name="password2" minlength="8" required>
+    <input id="pass2" type="password" name="password2" minlength="8" required autocomplete="off">
   </label>
 
   <button id="submitBtn">Next</button>

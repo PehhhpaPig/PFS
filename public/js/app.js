@@ -259,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
           alert(result.message + ", login form is locked until CAPTCHA is succesfull." || "Incorrect CAPTCHA" + ", login form is locked until CAPTCHA is succesfull.");
           // Block login fields if CAPTCHA is failed
           loginBtn.disabled = true;
-
+          
           if (result.hint) {
             captchaHint.textContent = result.hint;
           }
