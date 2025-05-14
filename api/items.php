@@ -17,8 +17,17 @@ switch($_SERVER['REQUEST_METHOD']){
    if($role!=='admin') json_response(['error'=>'Forbidden'],403);
    $d=json_decode(file_get_contents('php://input'),true,512,JSON_THROW_ON_ERROR);
    $name=trim($d['name']??'');
+   if (strlen($name) > 100 || !preg_match('/^[\p{L}\p{N}\s\.\-\'"]+$/u', $name)) { //sanitise name input
+    json_response(['error' => 'Invalid item name'], 422);
+  }
    $stock=(int)($d['stock']??0);
+   if ($stock < 0 || $stock > 1000000) { //Prevent overflows
+    json_response(['error' => 'Invalid stock count'], 422);
+}
    $loc=trim($d['location']??'');
+   if (strlen($loc) > 100 || !preg_match('/^[\p{L}\p{N}\s\-\(\)\/\.]*$/u', $loc)) { //sanitise location input
+    json_response(['error' => 'Invalid location format'], 422);
+  }
    $tag=isset($d['rfid_tag'])?strtoupper(trim($d['rfid_tag'])):null;
    if($name===''||$stock<0) json_response(['error'=>'Invalid payload'],422);
    if($tag!==null&&!preg_match('/^[A-F0-9]{8,32}$/',$tag)) json_response(['error'=>'Invalid tag'],422);

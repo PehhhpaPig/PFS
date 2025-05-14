@@ -25,6 +25,9 @@ function is_strong_password($password) {
 /* ---------- STEP 1 – username ---------- */
 if (isset($_POST['username'])) {
     $u = trim($_POST['username']);
+    if (!preg_match('/^[a-zA-Z0-9_]{3,30}$/', $u)) { //sanitise user strings
+    json_out(['error' => 'Invalid username format']);
+    }
     $st = $pdo->prepare('SELECT id FROM users WHERE username = ?');
     $st->execute([$u]);
     if (!$row = $st->fetch()) { json_out(['error'=>'User not found'], 404); }

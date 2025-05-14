@@ -1,4 +1,4 @@
-# PFS V 0.9.0
+# PFS V 0.10.0
 
 ## Install Instructions using XAMPP:
 
@@ -39,9 +39,10 @@ Implemented Security Features:
 10. Rudimentary user-input sanitisation (white spaces stripped, length enforced, 2FA codes only checked numerically using RegEx). <-- More work needs doing here
 11. CAPTCHA added to stop bruteforce attacks against login credentials and 2FA TOTP verification codes on login and password reset.
 12. User passwords for registration and password resets are mandated to be at least 8 characters including symbol, uppercase and lowercase, and number chars.
+13. String sanitisation on user inputs to prevent injection, overflow, etc. (Usernames, passwords, 2FA, RFID Tags, Item Data arrays) - RegEx *was* a friend here. 
 
 Future Security Features:
-1. Much more heavy duty user-string sanitisation (RegEx would be a friend here).
+1. ~~More heavy duty user-string sanitisation (RegEx would be a friend here).~~✅Completed!✅
 2. ~~User password strength mandates~~✅Completed!✅
 3. Encrypt database for prod-build.
 4. Purge database credentials list (add secure password to root, remove additional account).

@@ -25,6 +25,9 @@ function json_out(array $arr, int $http = 200): never {
 /* ---------------- read input ---------------- */
 $raw = $_POST ?: json_decode(file_get_contents('php://input'), true) ?: [];
 $user = trim($raw['username'] ?? '');
+if (!preg_match('/^[a-zA-Z0-9_]{3,30}$/', $user)) { //sanitise user strings
+    json_out(['error' => 'Invalid username format']);
+}
 $pass =        $raw['password'] ?? '';
 if ($user === '' || $pass === '') json_out(['error'=>'Missing fields'], 422);
 
