@@ -5,29 +5,29 @@
 <link rel="stylesheet" href="css/style.css">
 <title>Sign Up – 2‑Factor Required</title>
 <style>
- body{font-family:system-ui,sans-serif;max-width:440px;margin:2rem auto}
- label{display:block;margin:.6rem 0 .2rem} input{width:100%;padding:.45rem}
- button{padding:.45rem .8rem;margin-top:.8rem}
  #qrStage{display:none;text-align:center}
  #msg{margin-top:1rem}
 </style>
 </head>
 <body>
-<h1>Create Account</h1>
+
 
 <!-- STEP 1 -->
-<form id="credsForm">
-  <label>Username
-    <input name="username" required pattern=".{3,32}">
-  </label>
-  <label>Password
-    <input type="password" name="password" required minlength="8">
-  </label>
-  <label>Confirm Password
-    <input type="password" name="confirm" required minlength="8">
-  </label>
+<div>
+  <form id="credsForm" role="form" novalidate>
+  <h1>Create Account</h1>
+  <div id="passfeilds">
+    <div style="height: 2rem;"></div>
+    <input name="username" placeholder="Username" pattern=".{3,32}">
+    <br>
+    <input type="password" placeholder="Password" name="password" required minlength="8">
+    <br>
+    <input type="password" placeholder="Confirm Password" name="confirm" required minlength="8">
+    <br>
+  </div> 
   <button>Next: Scan QR</button>
-</form>
+  </form>
+</div>
 
 <!-- STEP 2 -->
 <div id="qrStage">
@@ -50,26 +50,47 @@
 <!-- local QR generator -->
 <script src="../public/js/qrcode.js"></script>
 <script type="module">
-const api = async fd => (await fetch('../api/auth/register.php',{
-  method:'POST',credentials:'include',body:fd,headers:{'Accept':'application/json'}
+  const api = async fd => (await fetch('../api/auth/register.php',{
+  method:'POST',
+  credentials:'include',
+  body:fd,
+  headers:{'Accept':'application/json'}
 })).json();
 
 const $ = id=>document.getElementById(id), msg=$('msg');
 
 $('credsForm').addEventListener('submit',async e=>{
-  e.preventDefault(); msg.textContent='Creating account…';
+  e.preventDefault(); 
+  msg.textContent='Creating account…';
+  
   const out=await api(new FormData(e.target));
-  if(out.error){msg.textContent='❌ '+out.error;return;}
+
+  if(out.error){
+    msg.textContent='❌ '+out.error;
+    return;
+  }
+  console.log('API response:', out);
+  
+  msg.innerHTML='✅ Account created. <a href="index.html">Log in</a>';
   // draw QR locally
   new QRCode($('qrBox'), {text:out.uri,width:200,height:200});
-  e.target.style.display='none'; $('qrStage').style.display='block'; msg.textContent='';
+  e.target.style.display='none'; 
+  $('qrStage').style.display='block'; 
+  msg.textContent='';
 });
-
 $('codeForm').addEventListener('submit',async e=>{
-  e.preventDefault();
+  e.preventDefault(); 
+  msg.textContent='Verifying…';
+  
   const out=await api(new FormData(e.target));
-  if(out.error){msg.textContent='❌ '+out.error;return;}
-  msg.innerHTML='✅ Account created. <a href="index.html">Log in</a>';
+
+  if(out.error){
+    msg.textContent='❌ '+out.error;
+    return;
+  }
+  console.log('API response:', out);
+  
+  msg.innerHTML='✅ Account created. <br><a href="index.html">Log in</a>';
 });
 </script>
 </body>

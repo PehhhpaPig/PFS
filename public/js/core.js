@@ -1,4 +1,4 @@
-export const prefix = window.location.pathname.split('/').includes('PFS') ? '/PFS/api' : '/api';
+export const prefix = window.location.pathname.includes('/PFS/') ? '/PFS/api' : '/api';
 export const $ = (sel) => document.querySelector(sel);
 
 export async function api(path, opts = {}) {

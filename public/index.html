@@ -1,72 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>NuTracker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - NuTracker</title>
   <link rel="stylesheet" href="css/style.css">
   <script type="module" defer src="js/app.js"></script>
-  <style>
-    body{font-family:system-ui;margin:1rem;max-width:900px}
-    table{border-collapse:collapse;width:100%}
-    th,td{border:1px solid #ccc;padding:.3rem;text-align:left}
-    thead{background:#f3f3f3}
-    input,button{margin:.2rem}
-  </style>
+  <script type="module" defer src="js/login.js"></script>
 </head>
 <body>
-  <h1 id="header">Please Log In to NuTracker</h1>
-
-  <!-- Auth -->
-  <section id="auth">
-    <div id="passwordRow">
-      <input id="user" placeholder="Username">
-      <input id="pass" type="password" placeholder="Password">
-    </div>
-    <div id="codeRow" hidden>
-      <input id="code" placeholder="6‑digit code">
-    </div>
-    <button id="loginBtn">Login</button>
-    <p><a href="reset.html">Forgot password?</a></p>
-    <a href="register.html">Register</a>
-    
-    <form id="captcha" hidden action="/PFS/api/auth/captcha_verify.php" method="post">
-        <img id="captchaImg" src="/PFS/securimage/securimage_show.php" alt="CAPTCHA Image" /><br><br>
-        <input type="text" name="captcha_code" size="10" maxlength="6" placeholder="Enter CAPTCHA" required>
-        <a href="#" onclick="document.getElementById('captchaImg').src = '/PFS/securimage/securimage_show.php?' + Date.now(); return false;">[ Different Image ]</a>
-        <br><br>
-        <input type="submit" value="Submit">
-        <b id="incorrect" color="#FF0000" hidden>Incorrect Code</b>
-    </form>
-    
-  </section>
-
-  <!-- Main app UI -->
-  <section id="app" hidden>
-    <!-- Scan panel -->
-    <h2>Scan Tag</h2>
-    <input id="tagInput" placeholder="Tag ID (hex)"><button id="scanBtn">Submit</button>
-
-    <h2>Add Item</h2>
-    <input id="itemName" placeholder="Name">
-    <input id="itemStock" type="number" min="0" placeholder="Stock">
-    <input id="itemLoc"   placeholder="Location">
-    <input id="itemTag"   placeholder="RFID (hex optional)">
-    <button id="addItemBtn">Add</button>
-
-    <h2>Items</h2>
-    <table>
-     <thead><tr><th>ID</th><th>Name</th><th>Stock</th><th>Location</th><th>RFID Tag</th><th></th></tr></thead>
-     <tbody id="itemsBody"></tbody>
-    </table>
-
-    <!-- Scan history -->
-    <h2>Recent Scans</h2>
-    <table>
-      <thead><tr><th>ID</th><th>Tag</th><th>User</th><th>Time</th></tr></thead>
-      <tbody id="scansBody"></tbody>
-    </table>
-
-    <button onclick="location.reload()">Logout</button>
-  </section>
+  <div class="container-login">
+    <section id="auth">
+      <h1>Please Log In to NuTracker</h1>
+      <form id="loginForm">
+        <div id="passwordRow">
+          <input id="user" name="username" placeholder="Username" required>
+          <input id="pass" name="password" type="password" placeholder="Password" required>
+        </div>
+        <div id="codeRow" hidden>
+          <input id="code" name="code" placeholder="6‑digit code">
+        </div>
+        <button type="button" id="loginBtn">Login</button>
+      </form>
+      <p><a href="reset.html">Forgot password?</a></p>
+      <a href="register.html">Register</a>
+    </section>
+  </div>
 </body>
 </html>

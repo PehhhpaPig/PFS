@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Main App - NuTracker</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script type="module" defer src="js/app.js"></script>
+  <script type="module" defer src="js/scan.js"></script>
+    <script>
+    console.log('app.html loaded');
+  </script>
+</head>
+<body>
+    
+  <section id="app">
+    <!-- Scan panel -->
+    <h2>Scan Tag</h2>
+    <input id="tagInput" placeholder="Tag ID (hex)"><button id="scanBtn">Submit</button>
+
+    <h2>Add Item</h2>
+    <input id="itemName" placeholder="Name">
+    <input id="itemStock" type="number" min="0" placeholder="Stock">
+    <input id="itemLoc" placeholder="Location">
+    <input id="itemTag" placeholder="RFID (hex optional)">
+    <button id="addItemBtn">Add</button>
+
+    <h2>Items</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Name</th><th>Stock</th><th>Location</th><th>RFID Tag</th><th></th></tr></thead>
+      <tbody id="itemsBody"></tbody>
+    </table>
+
+    <h2>Recent Scans</h2>
+    <table>
+      <thead><tr><th>ID</th><th>Tag</th><th>User</th><th>Time</th></tr></thead>
+      <tbody id="scansBody"></tbody>
+    </table>
+  </section>
+</body>
+</html>

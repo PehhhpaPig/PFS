@@ -1,32 +1,15 @@
 <?php
-require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
-require_once dirname(__DIR__,2) . '/securimage/CaptchaObject.php'; 
-require_once  dirname(__DIR__,1) . '/db.php';
+session_start();
+require_once 'securimage/securimage.php';
 
-start_secure_session();
+$securimage = new Securimage();
 
-header('Content-Type: application/json');
-
-
-$stored = $_SESSION['securimage_data'][''] ?? null;
-
-if (empty($_POST['captcha_code'])) {
-    json_out(['error'=>'Enter a Captcha Code'], 401);
-    exit;
-}
-
-if ($stored instanceof \Securimage\CaptchaObject) {
-    if(!(($stored->code_display)===$_POST['captcha_code'])){
-        echo "incorrect";
-    }
+if ($securimage->check($_POST['captcha_code']) == false) {
+    echo "<h3>⚠️ Incorrect CAPTCHA. Please try again.</h3>";
+    echo "<a href='captcha_form.php'>Go Back</a>";
 } else {
-    json_out(['error'=>'No valid captcha in session'], 418);
+    echo "<h3>✅ CAPTCHA Passed. Form can now be processed.</h3>";
+    echo "Welcome, " . htmlspecialchars($_POST['username']) . "!";
+    // Here you could handle form logic, store in database, etc.
 }
-
-
-// CAPTCHA was correct
-//O dear god, this entire captcha flow is not my proudest moment
-//but it /looks/ like at works
-//fake it till ya make it
-$_SESSION['captcha_required']=false;
-header('Location: '.'/PFS/public/index.html');
+?>

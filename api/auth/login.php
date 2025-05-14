@@ -12,7 +12,6 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/../db.php';     // loads PDO + start_secure_session()
-require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
 start_secure_session();
 header('Content-Type: application/json; charset=utf-8');
 
@@ -21,6 +20,7 @@ function json_out(array $arr, int $http = 200): never {
     http_response_code($http);
     echo json_encode($arr); exit;
 }
+
 
 /* ---------------- read input ---------------- */
 $raw = $_POST ?: json_decode(file_get_contents('php://input'), true) ?: [];
@@ -32,9 +32,8 @@ if ($user === '' || $pass === '') json_out(['error'=>'Missing fields'], 422);
 $stm = $pdo->prepare('SELECT id, pw_hash, role, totp_enabled FROM users WHERE username=?');
 $stm->execute([$user]);
 $usr = $stm->fetch(PDO::FETCH_ASSOC);
-if (!$usr){
-    json_out(['error'=>'Invalid username or password'], 401);
-}
+if (!$usr) json_out(['error'=>'Invalid username or password'], 401);
+
 /* ---------------- throttle look‑up ---------------- */
 $ip  = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 $now = date('Y-m-d H:i:s');
@@ -50,16 +49,12 @@ $rec = $thr->fetch(PDO::FETCH_ASSOC) ?: ['fails'=>0,'lock_until'=>null,'last_fai
 if ($rec['lock_until'] && $now < $rec['lock_until']) {
     json_out(['error'=>'Too many attempts. Try again later.'], 429);
 }
-if ($_SESSION['captcha_required'] == true){
-    json_out(['error'=>'Captcha Required!'], 418);
-}
 
 /* ---------------- password check ---------------- */
 if (!password_verify($pass, $usr['pw_hash'])) {
 
     /* update failure counters */
     $fails = $rec['fails'] + 1;
-    $_SESSION['login_failures'] = ($_SESSION['login_failures'] ?? 0) + 1;
 
     /* reset 15‑min window */
     if ($rec['last_fail'] && strtotime($rec['last_fail']) < time() - 900) {
@@ -81,16 +76,14 @@ if (!password_verify($pass, $usr['pw_hash'])) {
          VALUES (?,?,?,?,?)')
         ->execute([$user, $ip, $fails, $lock, $now]);
 
-    json_out(['error'=>'Invalid username or password', 'captcha_required' => $_SESSION['login_failures'] >= 1], 401);
-    $_SESSION['captcha_required']=true;
+    json_out(['error'=>'Invalid username or password'], 401);
 }
 
 /* ---------------- success: clear throttle ---------------- */
 $pdo->prepare(
     'DELETE FROM login_throttle WHERE username=? AND ip_addr=?')
     ->execute([$user, $ip]);
-//Clear login failures
-$_SESSION['login_failures'] = 0;
+
 /* ---------------- 2‑factor step ---------------- */
 if ((int)$usr['totp_enabled'] === 1) {
     $_SESSION['pre_2fa'] = $usr['id'];          // will be promoted in verify_2fa.php

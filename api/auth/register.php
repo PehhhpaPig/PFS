@@ -20,10 +20,30 @@ if(isset($_POST['code'],$_SESSION['pending_uid'],$_SESSION['pending_secret'])){
 }
 
 /* STEP 1 – create user, return otpauth URI */
-$u=trim($_POST['username']??''); $p=$_POST['password']??''; $c=$_POST['confirm']??'';
-if($u==''||strlen($p)<8||$p!==$c){echo json_encode(['error'=>'Invalid input.']);exit;}
-$ex=$pdo->prepare('SELECT 1 FROM users WHERE username=?');$ex->execute([$u]);
-if($ex->fetch()){echo json_encode(['error'=>'Username taken.']);exit;}
+$u=trim($_POST['username']??''); 
+$p=$_POST['password']??''; 
+$c=$_POST['confirm']??'';
+
+if($u == ''){
+    echo json_encode(['error' => 'Username cannot be empty.']); exit;
+}
+if(strlen($p)<8)
+{
+    echo json_encode(['error' => 'Password must be at least 8 characters.']);
+    exit;
+}
+if($p !== $c)
+{
+    echo json_encode(['error' => 'Passwords do not match.']);
+    exit;
+}
+
+$ex=$pdo->prepare('SELECT 1 FROM users WHERE username=?');
+$ex->execute([$u]);
+if($ex->fetch()){
+    echo json_encode(['error'=>'Username taken.']);
+    exit;
+}
 
 $hash=password_hash($p, PASSWORD_BCRYPT, ['cost' => 12]);
 $secret = Totp::generateRandomSecret();  
