@@ -42,7 +42,7 @@ Implemented Security Features:
 13. String sanitisation on user inputs to prevent injection, overflow, etc. (Usernames, passwords, 2FA, RFID Tags, Item Data arrays) - RegEx *was* a friend here. 
 
 Future Security Features:
-1. ~~More heavy duty user-string sanitisation (RegEx would be a friend here).~~✅Completed!✅
+1. ~~More heavy duty user-string sanitisation (RegEx would be a friend here)~~ ✅Completed!✅
 2. ~~User password strength mandates~~✅Completed!✅
 3. Encrypt database for prod-build.
 4. Purge database credentials list (add secure password to root, remove additional account).
