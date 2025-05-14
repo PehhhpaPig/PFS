@@ -45,9 +45,9 @@ Implemented Security Features:
 Future Security Features:
 1. ~~More heavy duty user-string sanitisation (RegEx would be a friend here)~~ ✅Completed!✅
 2. ~~User password strength mandates~~✅Completed!✅
-3. Encrypt database for prod-build. ❗Will hopefully be done before presentation❗
-4. Purge database credentials list (add secure password to root, remove additional account). ❗Will hopefully be done before presentation❗
-5. Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address). ❕Will be done before production. This is a local change to XAMPP config, so will not be implemented through GitHub❕
+3. *Encrypt database for prod-build.* ❗Will hopefully be done before presentation❗
+4. *Purge database credentials list (add secure password to root, remove additional account).* ❗Will hopefully be done before presentation❗
+5. *Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).* ❕Will be done before production. This is a local change to XAMPP config, so will not be implemented through GitHub❕
 6. ~~Add CAPTCHA to further protect against bot bruteforcing (this is proving harder than expected)~~ ✅Completed!✅
 7. ~~Anything else~~ ❌no time lol❌
    
