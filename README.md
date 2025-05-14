@@ -1,4 +1,4 @@
-# PFS V 0.11.0
+# PFS V 0.11.1
 
 ## Install Instructions using XAMPP:
 
