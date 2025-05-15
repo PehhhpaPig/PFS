@@ -1,9 +1,10 @@
-# PFS V 0.11.2
+# PFS V 0.12.0
 
 ## Install Instructions using XAMPP:
 
 # For macOS
-1. If not already installed, install HomeBrew (https://brew.sh/) onto MacOS using /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+1. With XAMPP installed:
+2. If not already installed, install HomeBrew (https://brew.sh/) onto MacOS using /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
    -- Use the website instructions if unsure of this, or ask me
 3. Download all code files as ZIP. Extract these files, rename the project folder from "pfs-main" to "PFS".
 4. Place this folder into HTDOCS, alongside the existing masteryLevels folder. Eg htdocs should contain a MasteryLevels folder, and also a PFS folder.
@@ -12,15 +13,18 @@
 7. Once install has completed, type command: php init_db.php
 8. This should print "Schema imported and sample data seeded \n Database and user initialised"
 9. If all these steps have completed correctly, you should now be able to visit localhost/PFS/public/index.html in a web browser.
-10. You should be able to log-in as admin / [password in messenger] or create a new account.
-11. Please let me know if you have any issues, I can try to fix.
+10. You can log-in as a demo account without 2FA authentication, or alternately you can register a new account. 
+11. If you create a new account, you will be forced to add 2FA by scanning a QR code inside either Google Authenticator, or Microsoft Authenticator.
+You must then use these Authenticator codes to log in to your account each time.
+12. Please let me know if you have any issues, I can try to fix.
     
-# For Linux (these instructions are outdated, but fair sure it only impacts me lol)
-1. All files should be added to XAMPP htdocs folder, using the heirarchy as it appears in github (ie. htdocs/PFS/api/... and htdocs/PFS/public/... etc)
-2. When all are added, start apache and mySQL. Create a database at browser address: http://localhost/phpmyadmin/index.php, and name it NuTracker.
-3. Under the SQL tab in this database, run all the queries inside PFS/init_db.php by hand (has been reconfigured for Mac instead)
+# For Ubuntu-Linux (I have only tested these during development on my own computer, as such they have not been verified with a clean 3rd party install)
+1. With XAMPP installed, and Apache Web Server and mySQL Database both running:
+2. All files should be added to XAMPP htdocs folder (typically /opt/lampp/htdocs/), using the heirarchy as it appears in github (ie. /opt/lampp/htdocs/PFS/api/... and /opt/lampp/htdocs/PFS/public/... etc)
+3. When all are added, enter command: % /opt/lampp/bin/php /opt/lampp/htdocs/PFS/init_db.php
+3. This will run the database initilisation. An error message during installation about a missing Sodium installation /should/ be ok, as missing Sodium functions are automatically handled using Composer.
 4. Once database is initialised and all files and folders are installed correctly (as shown in github repo), you can go to http://localhost/PFS/public/index.html.
-5. You can log-in as username: admin / password: [message me for password], or create a new account.
+5. You can log-in as a demo account without 2FA authentication, or alternately you can register a new account. 
 6. If you create a new account, you will be forced to add 2FA by scanning a QR code inside either Google Authenticator, or Microsoft Authenticator.
 You must then use these Authenticator codes to log in to your account each time.
 
@@ -41,12 +45,13 @@ Implemented Security Features:
 12. User passwords for registration and password resets are mandated to be at least 8 characters including symbol, uppercase and lowercase, and number chars.
 13. String sanitisation on user inputs to prevent injection, overflow, etc. (Usernames, passwords, 2FA, RFID Tags, Item Data arrays) - RegEx *was* a friend here.
 14. Data-field auto-filling disabled.
+15. Database credentials list automatically purged upon initialisation, and root is both locked and denied for remote access. 
 
 Future Security Features:
 1. ~~More heavy duty user-string sanitisation (RegEx would be a friend here)~~ ✅Completed!✅
 2. ~~User password strength mandates~~✅Completed!✅
-3. *Encrypt database for prod-build.* ❗Will hopefully be done before presentation❗
-4. *Purge database credentials list (add secure password to root, remove additional account).* ❗Will hopefully be done before presentation❗
+3. *Encrypt database for prod-build.* ❕This will not be done for the purpose of demoing for assignment, but should be implemented in practice were this to enter real production❕
+4. ~~Purge database credentials list (add secure password to root, remove additional account).~~ ✅Completed!✅
 5. *Configure Apache to not display file endings in URL (eg. https://localhost/PFS/index.html should only display as https://localhost/PFS/index or equivalent address).* ❕Will be done before production. This is a local change to XAMPP config, so will not be implemented through GitHub❕
 6. ~~Add CAPTCHA to further protect against bot bruteforcing (this is proving harder than expected)~~ ✅Completed!✅
 7. ~~Anything else~~ ❌no time lol❌

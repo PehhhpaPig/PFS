@@ -36,7 +36,7 @@ $hash=password_hash($p, PASSWORD_BCRYPT, ['cost' => 12]);
 $secret = Totp::generateRandomSecret();  
 $encSecret = totp_encrypt($secret);
 $pdo->prepare('INSERT INTO users(username,pw_hash,role,totp_secret,totp_enabled)
-               VALUES(?,?,?,?,0)')
+               VALUES(?,?,?,?,1)')
     ->execute([$u,$hash,'viewer',$encSecret]);
 $_SESSION['pending_uid']=$pdo->lastInsertId();
 $_SESSION['pending_secret']=$secret;

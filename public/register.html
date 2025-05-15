@@ -5,11 +5,9 @@
 <link rel="stylesheet" href="css/style.css">
 <title>Sign Up – 2‑Factor Required</title>
 <style>
- body{font-family:system-ui,sans-serif;max-width:440px;margin:2rem auto}
- label{display:block;margin:.6rem 0 .2rem} input{width:100%;padding:.45rem}
- button{padding:.45rem .8rem;margin-top:.8rem}
- #qrStage{display:none;text-align:center}
- #msg{margin-top:1rem}
+
+ #qrStage{display:none;text-align:left}
+
 </style>
 </head>
 <body>
@@ -34,7 +32,7 @@
 <!-- STEP 2 -->
 <div id="qrStage">
   <h2>Scan with Google / Microsoft Authenticator</h2>
-  <div id="qrBox"></div>
+  <div id="qrBox" class="text-center" style="margin: 1rem 0;"></div>
   <form id="codeForm">
     <label>Enter first 6‑digit code
       <input name="code"
@@ -47,7 +45,7 @@
   </form>
 </div>
 
-<p id="msg"></p>
+<p id="msg" class="alert" style="margin-top: 1.5rem;"></p>
 </div>
 
 <!-- local QR generator -->

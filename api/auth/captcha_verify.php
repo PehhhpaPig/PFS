@@ -32,11 +32,6 @@ if ($stored instanceof \Securimage\CaptchaObject) {
     json_out(['error'=>'No valid captcha in session'], 418);
 }
 
-
-// CAPTCHA was correct
-//O dear god, this entire captcha flow is not my proudest moment
-//but it /looks/ like at works
-//fake it till ya make it
 $_SESSION['captcha_required']=false;
 
 echo json_encode([

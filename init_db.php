@@ -7,6 +7,17 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
+// 2) Read env vars
+$rootUser = $_ENV['DB_ROOT_USER'];
+$rootPass = $_ENV['DB_ROOT_PASS'] ?? '';
+$dbName   = $_ENV['DB_NAME'];
+$appUser  = $_ENV['DB_APP_USER'];
+$appPass  = $_ENV['DB_APP_PASS'];
+/*
 $cfg = parse_ini_file(__DIR__ . '/../PFS/config.ini', false, INI_SCANNER_TYPED);
 if ($cfg === false) die("No config.ini found
 ");
@@ -16,7 +27,7 @@ $rootPass = $cfg['ROOT_PASS'] ?? '';
 $appUser  = $cfg['DB_USER'];
 $appPass  = $cfg['DB_PASS'];
 $dbName   = $cfg['DB_NAME'];
-
+*/
 $dsn = 'mysql:host=127.0.0.1;port=3306;charset=utf8mb4';
 $pdo = new PDO($dsn, 'root', ''); 
 
@@ -111,8 +122,29 @@ $pdo->exec("ALTER TABLE login_throttle
   DROP   PRIMARY KEY,
   ADD PRIMARY KEY (username, ip_addr, phase);");
   
-echo "Schema imported and sample data seeded ✔
+echo "\n\n\nSchema imported and sample data seeded ✔
 ";
 
-echo "Database and user initialised ✔
+echo "\nDatabase and user initialised ✔
 ";
+try {
+    echo "🔒 Locking down MySQL root account…\n";
+
+    // 1) Remove any remote‐root entries
+    $pdo->exec("DROP USER IF EXISTS 'root'@'%'");
+    $pdo->exec("DELETE FROM mysql.user WHERE User='root' AND Host<>'localhost'");
+
+    // 2) Lock the local root so it cannot authenticate with a password
+    //    (MariaDB/MySQL 5.7+ supports ACCOUNT LOCK)
+    $pdo->exec("ALTER USER 'root'@'localhost' ACCOUNT LOCK");
+
+    // 3) Flush so MySQL applies the changes immediately
+    $pdo->exec("FLUSH PRIVILEGES");
+
+    echo "✅ Root account now locked to socket-only (or skip-grant-tables recovery).\n";
+} catch (PDOException $e) {
+    // Non-fatal: warn you but keep the script from crashing
+    fwrite(STDERR, "⚠️ Warning during root lockdown: ".$e->getMessage()."\n");
+}
+echo "✅ Database initialized and sample data seeded. Exiting...\n";
+exit(0);
