@@ -12,7 +12,8 @@ $('#loginBtn').onclick = async () => {
       body   : JSON.stringify({
         username : $('#user').value.trim(),
         password : $('#pass').value
-      })
+      }),
+      credentials : 'include',
     });
 
     if (out.need_2fa) {
@@ -25,6 +26,7 @@ $('#loginBtn').onclick = async () => {
       onLoginSuccess();
     } else {
             if (out.captcha_required) {
+              
               document.getElementById("captcha").hidden = false;
               document.addEventListener("DOMContentLoaded", () => {
   const captchaForm = document.getElementById("captcha");
@@ -58,7 +60,6 @@ $('#loginBtn').onclick = async () => {
 
         } else {
           alert(result.message || "Incorrect CAPTCHA");
-
           if (result.hint) {
             captchaHint.textContent = result.hint;
           }
@@ -78,6 +79,8 @@ $('#loginBtn').onclick = async () => {
 
           }
       alert(out.error);
+      generateCaptcha("pls");
+       /*HEREHEREHEREHERE*/
       loginBtn.disabled = true;
     }
   } else {
@@ -141,11 +144,13 @@ $('#loginBtn').onclick = async () => {
           if (result.reload && captchaImg) {
             captchaImg.src = "/PFS/securimage/securimage_show.php?" + Date.now();
           }
+          generateCaptcha("pls");
         }
 
       } catch (err) {
         console.error("CAPTCHA verification failed:", err);
         alert("Unable to verify CAPTCHA.");
+        generateCaptcha("pls");
       }
     });
   }
@@ -154,6 +159,7 @@ $('#loginBtn').onclick = async () => {
           }
       alert(out.error || 'Invalid code');
       loginBtn.disabled = true;
+      generateCaptcha("pls");
     }
   }
 };
@@ -226,6 +232,25 @@ function loadScans() {
       `<tr><td>${r.id}</td><td>${r.tag_id}</td><td>${r.username}</td><td>${r.scanned_at}</td></tr>`).join('');
   });
 }
+async function generateCaptcha(offeringToTheBloodGod){
+  const sendHelpYesterday = await fetch('/PFS/api/auth/generate_captcha.php', {
+      method : 'POST',
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body   : JSON.stringify({
+        this_took_me_too_long_to_figure_out_AI_is_useless_i_am_a_golden_god : ""
+      })
+    });
+  
+    const response = await sendHelpYesterday.json();
+    try{
+       document.getElementById("MyAncestorsAreSmilingOnMeImperial").innerHTML=response.godisdeadandthiscodekilledhim;
+    }
+    catch (err){
+        alert("Well, it was working, ho hum... "+err);
+    }
+}
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const captchaForm = document.getElementById("captcha");
