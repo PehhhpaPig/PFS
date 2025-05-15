@@ -15,7 +15,8 @@ require_once __DIR__ . '/../db.php';     // loads PDO + start_secure_session()
 require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
 start_secure_session();
 header('Content-Type: application/json; charset=utf-8');
-
+$captchaId = bin2hex(random_bytes(8));
+$_SESSION['captchaID'] = $captchaId;
 /* ---------------- helper ---------------- */
 function json_out(array $arr, int $http = 200): never {
     http_response_code($http);
@@ -36,7 +37,7 @@ $stm = $pdo->prepare('SELECT id, pw_hash, role, totp_enabled FROM users WHERE us
 $stm->execute([$user]);
 $usr = $stm->fetch(PDO::FETCH_ASSOC);
 if (!$usr){
-    json_out(['error'=>'Invalid username or password'], 401);
+    json_out(['error'=>'Invalid username or password', 'captchaid'=>$_SESSION['captchaID']], 401);
 }
 /* ---------------- throttle look‑up ---------------- */
 $ip  = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
@@ -84,7 +85,7 @@ if (!password_verify($pass, $usr['pw_hash'])) {
          VALUES (?,?,?,?,?)')
         ->execute([$user, $ip, $fails, $lock, $now]);
 
-    json_out(['error'=>'Invalid username or password', 'captcha_required' => $_SESSION['login_failures'] >= 1], 401);
+    json_out(['error'=>'Invalid username or password', 'captcha_required' => $_SESSION['login_failures'] >= 1, 'captchaid'=>$_SESSION['captchaID']], 401);
     $_SESSION['captcha_required']=true;
 }
 
