@@ -144,11 +144,13 @@ $('#loginBtn').onclick = async () => {
           if (result.reload && captchaImg) {
             captchaImg.src = "/PFS/securimage/securimage_show.php?" + Date.now();
           }
+          generateCaptcha("pls");
         }
 
       } catch (err) {
         console.error("CAPTCHA verification failed:", err);
         alert("Unable to verify CAPTCHA.");
+        generateCaptcha("pls");
       }
     });
   }
@@ -157,6 +159,7 @@ $('#loginBtn').onclick = async () => {
           }
       alert(out.error || 'Invalid code');
       loginBtn.disabled = true;
+      generateCaptcha("pls");
     }
   }
 };
