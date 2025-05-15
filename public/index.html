@@ -67,5 +67,25 @@
     <button class="logout" onclick="location.reload()">Logout</button>
   </section>
   </div>
+
+  <script>
+    async function securimageRefreshCaptcha(offeringToTheBloodGod, anotherOffering){
+  const sendHelpYesterday = await fetch('/PFS/api/auth/generate_captcha.php', {
+      method : 'POST',
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body   : JSON.stringify({
+        this_took_me_too_long_to_figure_out_AI_is_useless_i_am_a_golden_god : ""
+      })
+    });
+  
+    const response = await sendHelpYesterday.json();
+    try{
+       document.getElementById("MyAncestorsAreSmilingOnMeImperial").innerHTML=response.godisdeadandthiscodekilledhim;
+    }
+    catch (err){
+        alert("Well, it was working, ho hum... "+err);
+    }
+}
+  </script>
 </body>
 </html>

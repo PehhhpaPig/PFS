@@ -41,5 +41,12 @@ $updatedHtml = preg_replace_callback(
     },
     $img2
 );
+$offerings = 1;
+$html = str_replace(
+  'onclick="securimageRefreshCaptcha(\'captcha_image\', \'captcha_image_audioObj\');"',
+  'onclick="generateCaptcha('.$offerings.$offerings.'); return false"',
+  $img2
+);
+
 $_SESSION['captchaID'] = $_SESSION['saved'];
-    json_out(['godisdeadandthiscodekilledhim'=>$updatedHtml, 'captchaID'=>$_SESSION['captchaID']], 200);
+    json_out(['godisdeadandthiscodekilledhim'=>$html, 'captchaID'=>$_SESSION['captchaID']], 200);

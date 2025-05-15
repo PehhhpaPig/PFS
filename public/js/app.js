@@ -246,6 +246,9 @@ async function generateCaptcha(offeringToTheBloodGod){
         alert("Well, it was working, ho hum... "+err);
     }
 }
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const captchaForm = document.getElementById("captcha");
   const captchaImg = document.getElementById("captchaImg");
