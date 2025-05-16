@@ -1,4 +1,4 @@
-# PFS V 0.12.0
+# PFS V 1.1.5
 
 ## Install Instructions using XAMPP:
 
@@ -41,11 +41,12 @@ Implemented Security Features:
 8. 2FA code bruteforce protection implemented as a timeout of increasing length after 3 incorrect 2FA code entries for given username+correct password and given IP address. Double check my maths on this, but should statistically take ~16 months of bruteforcing from static IP address to bruteforce TOTP code (7/1000000 chance of correctly guessed code per attempt, after initial 18 wrong attempts lockout is maxed at 12 attempts allowed per hour). Obviously, dynamic IP cycling would circumvent this, probs should look into lockout for username rather than IP.
 9. Strict types enforced (ie. if an argument is expecting an integer and receives a float, it will error out rather than attempting to cast to int).
 10. Rudimentary user-input sanitisation (white spaces stripped, length enforced, 2FA codes only checked numerically using RegEx). <-- More work needs doing here
-11. CAPTCHA added to stop bruteforce attacks against login credentials and 2FA TOTP verification codes on login and password reset.
+11. CAPTCHA added to stop bruteforce attacks against login credentials and 2FA TOTP verification codes on login and password reset. If needed, CAPTCHA difficulty can be increased.
 12. User passwords for registration and password resets are mandated to be at least 8 characters including symbol, uppercase and lowercase, and number chars.
 13. String sanitisation on user inputs to prevent injection, overflow, etc. (Usernames, passwords, 2FA, RFID Tags, Item Data arrays) - RegEx *was* a friend here.
 14. Data-field auto-filling disabled.
-15. Database credentials list automatically purged upon initialisation, and root is both locked and denied for remote access. 
+15. Database credentials list automatically purged upon initialisation, and root is both locked and denied for remote access.
+16. All front-end facing files (JavaScript, HTML, CSS) have been obfuscated to prevent users from easily determining the structure of the application/server stack. For development purposes, these obfuscated files are only included in the 'Obfuscated_FrontEnd_Version' branch.
 
 Future Security Features:
 1. ~~More heavy duty user-string sanitisation (RegEx would be a friend here)~~ ✅Completed!✅
