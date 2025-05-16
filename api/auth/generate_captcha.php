@@ -1,16 +1,6 @@
 <?php
 declare(strict_types=1);
 
-/*
- |------------------------------------------------------------------
- |  /api/auth/login.php
- |------------------------------------------------------------------
- |  POST  username + password         (form‑data OR JSON)
- |  → { need_2fa:true }               first step OK, ask for code
- |  → { status:"OK", role:"admin" }   logged in (no 2FA)
- |  → { error:"msg" } HTTP 401/429    errors
- */
-
 require_once __DIR__ . '/../db.php';     // loads PDO + start_secure_session()
 require_once  dirname(__DIR__,2) . '/securimage/securimage.php';
 start_secure_session();
