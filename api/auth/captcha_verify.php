@@ -1,6 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL & ~E_DEPRECATED);
 
 require_once  dirname(__DIR__,2) . '/securimage/StorageAdapter/AdapterInterface.php';
 require_once  dirname(__DIR__,2) . '/securimage/StorageAdapter/Session.php';

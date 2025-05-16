@@ -1,11 +1,1 @@
-export const prefix = window.location.pathname.split('/').includes('PFS') ? '/PFS/api' : '/api';
-export const $ = (sel) => document.querySelector(sel);
-
-export async function api(path, opts = {}) {
-  const res = await fetch(`${prefix}${path}`, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json' },
-    ...opts,
-  });
-  return res.json();
-}
+const _0x391c62=_0x50d8;(function(_0xce554c,_0x2d202d){const _0x4d483f=_0x50d8,_0x484f0f=_0xce554c();while(!![]){try{const _0x191c5a=parseInt(_0x4d483f(0x1d5))/0x1+parseInt(_0x4d483f(0x1d9))/0x2*(-parseInt(_0x4d483f(0x1d1))/0x3)+parseInt(_0x4d483f(0x1d0))/0x4+parseInt(_0x4d483f(0x1da))/0x5*(parseInt(_0x4d483f(0x1ca))/0x6)+-parseInt(_0x4d483f(0x1d3))/0x7*(parseInt(_0x4d483f(0x1d2))/0x8)+-parseInt(_0x4d483f(0x1d6))/0x9+-parseInt(_0x4d483f(0x1c9))/0xa;if(_0x191c5a===_0x2d202d)break;else _0x484f0f['push'](_0x484f0f['shift']());}catch(_0x44a595){_0x484f0f['push'](_0x484f0f['shift']());}}}(_0x2185,0x4cbfa));function _0x50d8(_0x21716b,_0x5628c2){const _0x2185b8=_0x2185();return _0x50d8=function(_0x50d833,_0x1f03d8){_0x50d833=_0x50d833-0x1c9;let _0x192698=_0x2185b8[_0x50d833];return _0x192698;},_0x50d8(_0x21716b,_0x5628c2);}export const prefix=window['location'][_0x391c62(0x1cf)][_0x391c62(0x1cc)]('/')['includes'](_0x391c62(0x1ce))?_0x391c62(0x1d7):_0x391c62(0x1d8);function _0x2185(){const _0x1ecdd8=['3172833ZdOcmf','/PFS/api','/api','26VjdUVl','5gHFTwi','2015850RNWvEN','2610534aPyQRP','application/json','split','include','PFS','pathname','567376TCsYEp','41532BHYRDk','312nIbkAW','16016KCinZb','querySelector','560755fkubUf'];_0x2185=function(){return _0x1ecdd8;};return _0x2185();}export const $=_0x15842d=>document[_0x391c62(0x1d4)](_0x15842d);export async function api(_0x2c66dc,_0x1b728f={}){const _0x327f0a=_0x391c62,_0x5a0d76=await fetch(''+prefix+_0x2c66dc,{'credentials':_0x327f0a(0x1cd),'headers':{'Content-Type':_0x327f0a(0x1cb)},..._0x1b728f});return _0x5a0d76['json']();}
